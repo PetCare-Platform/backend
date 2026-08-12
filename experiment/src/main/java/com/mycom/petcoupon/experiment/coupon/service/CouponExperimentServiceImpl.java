@@ -21,13 +21,14 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class ExperimentCouponService {
+public class CouponExperimentServiceImpl implements CouponExperimentService {
 
     private final CouponStockRepository couponStockRepository;
     private final CouponIssueRepository couponIssueRepository;
     private final CouponRepository couponRepository;
 
     @Transactional
+    @Override
     public CreateCouponResponse create(CreateCouponRequest request) {
         if (request == null || request.quantity() == null || request.quantity() <= 0) {
             throw new InvalidExperimentRequestException("quantity must be greater than zero");
@@ -52,6 +53,7 @@ public class ExperimentCouponService {
     }
 
     @Transactional(readOnly = true)
+    @Override
     public CouponStatusResponse getStatus(Long couponId) {
         CouponStock stock = findStock(couponId);
         long issueCount = couponIssueRepository.countByCoupon_Id(couponId);
@@ -69,6 +71,7 @@ public class ExperimentCouponService {
     }
 
     @Transactional
+    @Override
     public CouponStatusResponse reset(Long couponId) {
         CouponStock stock = findStock(couponId);
         couponIssueRepository.deleteByCoupon_Id(couponId);

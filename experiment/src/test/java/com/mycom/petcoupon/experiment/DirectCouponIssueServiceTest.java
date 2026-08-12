@@ -24,7 +24,7 @@ import com.mycom.petcoupon.experiment.coupon.entity.Coupon;
 import com.mycom.petcoupon.experiment.coupon.entity.CouponStock;
 import com.mycom.petcoupon.experiment.coupon.repository.CouponRepository;
 import com.mycom.petcoupon.experiment.coupon.repository.CouponStockRepository;
-import com.mycom.petcoupon.experiment.coupon.service.DirectCouponIssueService;
+import com.mycom.petcoupon.experiment.coupon.service.DirectCouponIssueServiceImpl;
 import com.mycom.petcoupon.experiment.global.exception.CouponIssueException;
 import com.mycom.petcoupon.experiment.issue.entity.CouponIssue;
 import com.mycom.petcoupon.experiment.issue.repository.CouponIssueRepository;
@@ -47,7 +47,7 @@ class DirectCouponIssueServiceTest {
     private UserRepository userRepository;
 
     @InjectMocks
-    private DirectCouponIssueService service;
+    private DirectCouponIssueServiceImpl service;
 
     @Test
     void issuesCouponWithoutAcquiringPessimisticLock() {

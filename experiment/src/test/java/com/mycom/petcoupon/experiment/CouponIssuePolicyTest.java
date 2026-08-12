@@ -27,7 +27,7 @@ import com.mycom.petcoupon.experiment.coupon.entity.Coupon;
 import com.mycom.petcoupon.experiment.coupon.entity.CouponStock;
 import com.mycom.petcoupon.experiment.coupon.repository.CouponRepository;
 import com.mycom.petcoupon.experiment.coupon.repository.CouponStockRepository;
-import com.mycom.petcoupon.experiment.coupon.service.PessimisticCouponIssueService;
+import com.mycom.petcoupon.experiment.coupon.service.PessimisticCouponIssueServiceImpl;
 import com.mycom.petcoupon.experiment.global.exception.CouponIssueException;
 import com.mycom.petcoupon.experiment.issue.entity.CouponIssue;
 import com.mycom.petcoupon.experiment.issue.repository.CouponIssueRepository;
@@ -52,7 +52,7 @@ class CouponIssuePolicyTest {
     private UserRepository userRepository;
 
     @InjectMocks
-    private PessimisticCouponIssueService service;
+    private PessimisticCouponIssueServiceImpl service;
 
     @Test
     void duplicateRequestIsCheckedBeforeStockLock() {

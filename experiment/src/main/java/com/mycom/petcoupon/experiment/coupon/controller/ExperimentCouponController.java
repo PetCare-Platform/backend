@@ -15,9 +15,9 @@ import com.mycom.petcoupon.experiment.coupon.dto.CouponIssueResponse;
 import com.mycom.petcoupon.experiment.coupon.dto.CouponStatusResponse;
 import com.mycom.petcoupon.experiment.coupon.dto.CreateCouponRequest;
 import com.mycom.petcoupon.experiment.coupon.dto.CreateCouponResponse;
-import com.mycom.petcoupon.experiment.coupon.service.DirectCouponIssueService;
-import com.mycom.petcoupon.experiment.coupon.service.ExperimentCouponService;
-import com.mycom.petcoupon.experiment.coupon.service.PessimisticCouponIssueService;
+import com.mycom.petcoupon.experiment.coupon.service.CouponExperimentService;
+import com.mycom.petcoupon.experiment.coupon.service.DirectCouponIssueServiceImpl;
+import com.mycom.petcoupon.experiment.coupon.service.PessimisticCouponIssueServiceImpl;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +28,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ExperimentCouponController {
 
-    private final ExperimentCouponService experimentCouponService;
-    private final DirectCouponIssueService directCouponIssueService;
-    private final PessimisticCouponIssueService pessimisticCouponIssueService;
+    private final CouponExperimentService experimentCouponService;
+    private final DirectCouponIssueServiceImpl directCouponIssueService;
+    private final PessimisticCouponIssueServiceImpl pessimisticCouponIssueService;
 
     @PostMapping("/coupons")
     @ResponseStatus(HttpStatus.CREATED)

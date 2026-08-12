@@ -10,6 +10,7 @@ import com.mycom.petcoupon.experiment.coupon.dto.CouponIssueResult;
 import com.mycom.petcoupon.experiment.coupon.entity.CouponStock;
 import com.mycom.petcoupon.experiment.coupon.repository.CouponRepository;
 import com.mycom.petcoupon.experiment.coupon.repository.CouponStockRepository;
+import com.mycom.petcoupon.experiment.coupon.type.CouponIssueStrategy;
 import com.mycom.petcoupon.experiment.global.exception.CouponIssueException;
 import com.mycom.petcoupon.experiment.issue.entity.CouponIssue;
 import com.mycom.petcoupon.experiment.issue.repository.CouponIssueRepository;
@@ -19,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class PessimisticCouponIssueService {
+public class DirectCouponIssueServiceImpl implements CouponIssueService {
 
     private final CouponStockRepository couponStockRepository;
     private final CouponIssueRepository couponIssueRepository;
@@ -27,10 +28,12 @@ public class PessimisticCouponIssueService {
     private final UserRepository userRepository;
 
     @Transactional
+    @Override
     public CouponIssueResponse issue(Long couponId, CouponIssueRequest request) {
         rejectDuplicate(couponId, request);
 
-        CouponStock stock = couponStockRepository.findByIdWithPessimisticLock(couponId)
+        // 의도적으로 비관적 락, 버전 검사, 조건부 UPDATE를 사용하지 않는다.
+        CouponStock stock = couponStockRepository.findById(couponId)
                 .orElseThrow(() -> couponNotFound(couponId, request));
         if (stock.getRemainingQuantity() <= 0) {
             throw CouponIssueException.soldOut(couponId, request);
@@ -39,6 +42,11 @@ public class PessimisticCouponIssueService {
         stock.issue();
         saveIssue(couponId, request);
         return CouponIssueResponse.success(couponId, request);
+    }
+
+    @Override
+    public CouponIssueStrategy supports() {
+        return CouponIssueStrategy.DIRECT;
     }
 
     private void rejectDuplicate(Long couponId, CouponIssueRequest request) {

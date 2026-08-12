@@ -22,8 +22,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import com.mycom.petcoupon.experiment.coupon.dto.CouponIssueRequest;
 import com.mycom.petcoupon.experiment.coupon.dto.CouponStatusResponse;
 import com.mycom.petcoupon.experiment.coupon.dto.CreateCouponRequest;
-import com.mycom.petcoupon.experiment.coupon.service.ExperimentCouponService;
-import com.mycom.petcoupon.experiment.coupon.service.PessimisticCouponIssueService;
+import com.mycom.petcoupon.experiment.coupon.service.CouponExperimentService;
+import com.mycom.petcoupon.experiment.coupon.service.PessimisticCouponIssueServiceImpl;
 
 @SpringBootTest
 @EnabledIfEnvironmentVariable(named = "RUN_CONCURRENCY_TESTS", matches = "true")
@@ -35,10 +35,10 @@ class CouponConcurrencyExperimentTest {
     private static final int WORKER_COUNT = 200;
 
     @Autowired
-    private ExperimentCouponService experimentCouponService;
+    private CouponExperimentService experimentCouponService;
 
     @Autowired
-    private PessimisticCouponIssueService pessimisticCouponIssueService;
+    private PessimisticCouponIssueServiceImpl pessimisticCouponIssueService;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
