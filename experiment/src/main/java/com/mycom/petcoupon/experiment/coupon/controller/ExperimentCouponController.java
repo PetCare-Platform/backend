@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,8 +17,8 @@ import com.mycom.petcoupon.experiment.coupon.dto.CouponStatusResponse;
 import com.mycom.petcoupon.experiment.coupon.dto.CreateCouponRequest;
 import com.mycom.petcoupon.experiment.coupon.dto.CreateCouponResponse;
 import com.mycom.petcoupon.experiment.coupon.service.CouponExperimentService;
-import com.mycom.petcoupon.experiment.coupon.service.DirectCouponIssueServiceImpl;
-import com.mycom.petcoupon.experiment.coupon.service.PessimisticCouponIssueServiceImpl;
+import com.mycom.petcoupon.experiment.coupon.service.CouponIssueServiceResolver;
+import com.mycom.petcoupon.experiment.coupon.type.CouponIssueStrategy;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class ExperimentCouponController {
 
     private final CouponExperimentService experimentCouponService;
-    private final DirectCouponIssueServiceImpl directCouponIssueService;
-    private final PessimisticCouponIssueServiceImpl pessimisticCouponIssueService;
+    private final CouponIssueServiceResolver couponIssueServiceResolver;
 
     @PostMapping("/coupons")
     @ResponseStatus(HttpStatus.CREATED)
@@ -38,18 +38,12 @@ public class ExperimentCouponController {
         return experimentCouponService.create(request);
     }
 
-    @PostMapping("/coupons/{couponId}/direct")
-    public CouponIssueResponse issueDirect(
+    @PostMapping("/coupons/{couponId}/issue")
+    public CouponIssueResponse issue(
             @PathVariable("couponId") Long couponId,
+            @RequestParam("strategy") CouponIssueStrategy strategy,
             @Valid @RequestBody CouponIssueRequest request) {
-        return directCouponIssueService.issue(couponId, request);
-    }
-
-    @PostMapping("/coupons/{couponId}/pessimistic")
-    public CouponIssueResponse issuePessimistic(
-            @PathVariable("couponId") Long couponId,
-            @Valid @RequestBody CouponIssueRequest request) {
-        return pessimisticCouponIssueService.issue(couponId, request);
+        return couponIssueServiceResolver.resolve(strategy).issue(couponId, request);
     }
 
     @GetMapping("/coupons/{couponId}/status")
