@@ -1,7 +1,44 @@
 # Coupon Concurrency Experiment
 
-한정된 쿠폰 재고에 다수의 요청이 동시에 발생하는 상황에서
-여러 동시성 제어 전략의 정합성과 성능을 비교하는 실험입니다.
+쿠폰 발급 시 발생할 수 있는 동시성 문제를 여러 방식으로 구현하고 비교하기 위한
+Spring Boot 실험 모듈입니다.
+
+각 발급 방식은 동일한 요청/응답 구조를 사용하며,
+동시성 제어 로직만 전략별 Service로 분리합니다.
+
+
+## Tech Stack
+
+- Java 21
+- Spring Boot
+- Spring Data JPA
+- MySQL
+- Redis
+- Gradle
+
+
+## Project Structure
+
+```text
+experiment
+└── src/main/java/com/mycom/petcoupon/experiment
+    ├── coupon/
+    │   ├── controller/
+    │   ├── dto/
+    │   ├── entity/
+    │   ├── repository/
+    │   └── service/
+    │
+    ├── issue/
+    │   ├── entity/
+    │   └── repository/
+    │
+    ├── user/
+    │   ├── entity/
+    │   └── repository/
+    │
+    └── global/
+        └── exception/
 
 ## 비교 전략
 
