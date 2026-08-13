@@ -1,45 +1,38 @@
 # Coupon Concurrency Experiment
 
-쿠폰 발급 시 발생할 수 있는 동시성 문제를 여러 방식으로 구현하고 비교하기 위한
-Spring Boot 실험 모듈입니다.
+선착순 쿠폰 발급 과정에서 발생하는 동시성 문제를 확인하고,
+여러 동시성 제어 방식을 동일한 조건에서 비교하기 위한 실험 모듈입니다.
 
-각 발급 방식은 동일한 요청/응답 구조를 사용하며,
-동시성 제어 로직만 전략별 Service로 분리합니다.
+동시성 실험의 설계, 공통 코드 구조, 실험 결과에 대한 상세 내용은
+아래 문서에서 확인할 수 있습니다.
+
+## 문서
+
+- [동시성 실험 설계](docs/concurrency-experiment.md)
+- [실험 공통 코드 구조](docs/common-code.md)
+- [동시성 실험 결과](docs/experiment-results.md)
 
 
 ## Tech Stack
 
 - Java 21
-- Spring Boot
+- Spring Boot 4.1.0
 - Spring Data JPA
 - MySQL
 - Redis
 - Gradle
+- k6
 
 
-## Project Structure
+## Requirements
 
-```text
-experiment
-└── src/main/java/com/mycom/petcoupon/experiment
-    ├── coupon/
-    │   ├── controller/
-    │   ├── dto/
-    │   ├── entity/
-    │   ├── repository/
-    │   └── service/
-    │
-    ├── issue/
-    │   ├── entity/
-    │   └── repository/
-    │
-    ├── user/
-    │   ├── entity/
-    │   └── repository/
-    │
-    └── global/
-        └── exception/
-```
+실행 전 다음 환경이 필요합니다.
+
+- Java 21
+- MySQL
+- Gradle Wrapper
+
+부하 테스트를 수행하는 경우 추가로 k6가 필요합니다.
 
 ## 비교 전략
 
@@ -48,12 +41,6 @@ experiment
 - [OPTIMISTIC](docs/strategies/optimistic.md)
 - [CONDITIONAL](docs/strategies/conditional.md)
 - [REDIS](docs/strategies/redis.md)
-
-## 문서
-
-- [동시성 실험 설계](docs/concurrency-experiment.md)
-- [실험 공통 코드 구조](docs/common-code.md)
-- [동시성 실험 결과](docs/experiment-results.md)
 
 ## Observability
 
