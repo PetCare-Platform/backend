@@ -28,7 +28,8 @@ import com.mycom.petcoupon.experiment.coupon.entity.CouponStock;
 import com.mycom.petcoupon.experiment.coupon.repository.CouponRepository;
 import com.mycom.petcoupon.experiment.coupon.repository.CouponStockRepository;
 import com.mycom.petcoupon.experiment.coupon.service.PessimisticCouponIssueServiceImpl;
-import com.mycom.petcoupon.experiment.global.exception.CouponIssueException;
+import com.mycom.petcoupon.experiment.global.exception.ExperimentErrorCode;
+import com.mycom.petcoupon.experiment.global.exception.GeneralException;
 import com.mycom.petcoupon.experiment.issue.entity.CouponIssue;
 import com.mycom.petcoupon.experiment.issue.repository.CouponIssueRepository;
 import com.mycom.petcoupon.experiment.user.entity.User;
@@ -60,9 +61,9 @@ class CouponIssuePolicyTest {
         when(couponIssueRepository.existsByRequestId(request.requestId())).thenReturn(true);
 
         assertThatThrownBy(() -> service.issue(1L, request))
-                .isInstanceOfSatisfying(CouponIssueException.class, exception ->
-                        assertThat(exception.getResult())
-                                .isEqualTo(CouponIssueResult.DUPLICATE_REQUEST));
+                .isInstanceOfSatisfying(GeneralException.class, exception ->
+                        assertThat(exception.getErrorCode())
+                                .isEqualTo(ExperimentErrorCode.DUPLICATE_REQUEST));
 
         verifyNoInteractions(couponStockRepository, couponRepository, userRepository);
     }
@@ -75,9 +76,9 @@ class CouponIssuePolicyTest {
                 .thenReturn(true);
 
         assertThatThrownBy(() -> service.issue(1L, request))
-                .isInstanceOfSatisfying(CouponIssueException.class, exception ->
-                        assertThat(exception.getResult())
-                                .isEqualTo(CouponIssueResult.DUPLICATE_USER));
+                .isInstanceOfSatisfying(GeneralException.class, exception ->
+                        assertThat(exception.getErrorCode())
+                                .isEqualTo(ExperimentErrorCode.DUPLICATE_USER));
 
         verifyNoInteractions(couponStockRepository, couponRepository, userRepository);
     }
@@ -114,8 +115,8 @@ class CouponIssuePolicyTest {
                 .thenReturn(Optional.of(stock));
 
         assertThatThrownBy(() -> service.issue(10L, request))
-                .isInstanceOfSatisfying(CouponIssueException.class, exception ->
-                        assertThat(exception.getResult()).isEqualTo(CouponIssueResult.SOLD_OUT));
+                .isInstanceOfSatisfying(GeneralException.class, exception ->
+                        assertThat(exception.getErrorCode()).isEqualTo(ExperimentErrorCode.SOLD_OUT));
 
         verify(couponIssueRepository, never()).saveAndFlush(any());
         verifyNoInteractions(couponRepository, userRepository);

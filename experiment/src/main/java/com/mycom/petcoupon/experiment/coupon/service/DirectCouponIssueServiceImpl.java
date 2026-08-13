@@ -1,17 +1,20 @@
 package com.mycom.petcoupon.experiment.coupon.service;
 
+import java.util.Locale;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mycom.petcoupon.experiment.coupon.dto.CouponIssueRequest;
 import com.mycom.petcoupon.experiment.coupon.dto.CouponIssueResponse;
-import com.mycom.petcoupon.experiment.coupon.dto.CouponIssueResult;
 import com.mycom.petcoupon.experiment.coupon.entity.CouponStock;
 import com.mycom.petcoupon.experiment.coupon.repository.CouponRepository;
 import com.mycom.petcoupon.experiment.coupon.repository.CouponStockRepository;
 import com.mycom.petcoupon.experiment.coupon.type.CouponIssueStrategy;
-import com.mycom.petcoupon.experiment.global.exception.CouponIssueException;
+import com.mycom.petcoupon.experiment.global.exception.CommonErrorCode;
+import com.mycom.petcoupon.experiment.global.exception.ExperimentErrorCode;
+import com.mycom.petcoupon.experiment.global.exception.GeneralException;
 import com.mycom.petcoupon.experiment.issue.entity.CouponIssue;
 import com.mycom.petcoupon.experiment.issue.repository.CouponIssueRepository;
 import com.mycom.petcoupon.experiment.user.repository.UserRepository;
@@ -34,9 +37,9 @@ public class DirectCouponIssueServiceImpl implements CouponIssueService {
 
         // 의도적으로 비관적 락, 버전 검사, 조건부 UPDATE를 사용하지 않는다.
         CouponStock stock = couponStockRepository.findById(couponId)
-                .orElseThrow(() -> couponNotFound(couponId, request));
+                .orElseThrow(() -> new GeneralException(ExperimentErrorCode.COUPON_NOT_FOUND));
         if (stock.getRemainingQuantity() <= 0) {
-            throw CouponIssueException.soldOut(couponId, request);
+            throw new GeneralException(ExperimentErrorCode.SOLD_OUT);
         }
 
         stock.issue();
@@ -51,22 +54,11 @@ public class DirectCouponIssueServiceImpl implements CouponIssueService {
 
     private void rejectDuplicate(Long couponId, CouponIssueRequest request) {
         if (couponIssueRepository.existsByRequestId(request.requestId())) {
-            throw CouponIssueException.duplicateRequest(couponId, request);
+            throw new GeneralException(ExperimentErrorCode.DUPLICATE_REQUEST);
         }
         if (couponIssueRepository.existsByCoupon_IdAndUser_Id(couponId, request.userId())) {
-            throw CouponIssueException.duplicateUser(couponId, request);
+            throw new GeneralException(ExperimentErrorCode.DUPLICATE_USER);
         }
-    }
-
-    private CouponIssueException couponNotFound(
-            Long couponId,
-            CouponIssueRequest request) {
-        return new CouponIssueException(
-                couponId,
-                request.userId(),
-                request.requestId(),
-                CouponIssueResult.COUPON_NOT_FOUND,
-                "Coupon stock was not found");
     }
 
     private void saveIssue(Long couponId, CouponIssueRequest request) {
@@ -77,10 +69,26 @@ public class DirectCouponIssueServiceImpl implements CouponIssueService {
                     .requestId(request.requestId())
                     .build());
         } catch (DataIntegrityViolationException exception) {
-            throw CouponIssueException.translateDataIntegrityViolation(
-                    couponId,
-                    request,
-                    exception);
+            throw translateDataIntegrityViolation(exception);
         }
+    }
+
+    private GeneralException translateDataIntegrityViolation(DataIntegrityViolationException exception) {
+        String message = rootCauseMessage(exception).toLowerCase(Locale.ROOT);
+        if (message.contains("uq_request_id")) {
+            return new GeneralException(ExperimentErrorCode.DUPLICATE_REQUEST);
+        }
+        if (message.contains("uq_coupon_user")) {
+            return new GeneralException(ExperimentErrorCode.DUPLICATE_USER);
+        }
+        return new GeneralException(CommonErrorCode.INTERNAL_SERVER_ERROR);
+    }
+
+    private String rootCauseMessage(Throwable throwable) {
+        Throwable current = throwable;
+        while (current.getCause() != null) {
+            current = current.getCause();
+        }
+        return current.getMessage() == null ? "" : current.getMessage();
     }
 }
