@@ -9,17 +9,17 @@ import com.mycom.petcoupon.experiment.issue.entity.CouponIssue;
 
 public interface CouponIssueRepository extends JpaRepository<CouponIssue, Long> {
 
-    boolean existsByRequestId(String requestId);
+	boolean existsByRequestId(String requestId);
 
-    boolean existsByCoupon_IdAndUser_Id(Long couponId, Long userId);
+	boolean existsByCoupon_IdAndUser_Id(Long couponId, Long userId);
 
-    long countByCoupon_Id(Long couponId);
+	long countByCoupon_Id(Long couponId);
 
-    long deleteByCoupon_Id(Long couponId);
-    
-    // 요청 ID로 발급 내역 조회
-    Optional<CouponIssue> findByRequestId(String requestId);
-    
-    // Redis Queue 처리 순서를 테스트하기 위한 조회
-    List<CouponIssue> findAllByCoupon_IdOrderByIdAsc(Long couponId);
+	long deleteByCoupon_Id(Long couponId);
+
+	// 요청 ID로 발급 내역 조회
+//	Optional<CouponIssue> findByRequestId(String requestId);
+
+	// 쿠폰 발급 내역 조회
+	List<CouponIssue> findAllByCoupon_IdOrderByIdAsc(Long couponId);
 }

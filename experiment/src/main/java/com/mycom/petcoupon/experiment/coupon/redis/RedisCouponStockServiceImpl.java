@@ -59,4 +59,9 @@ public class RedisCouponStockServiceImpl implements RedisCouponStockService {
 		
 		redisTemplate.delete(getKey(couponId));
 	}
+
+	@Override
+	public Long increaseStock(Long couponId) {
+		return redisTemplate.opsForValue().increment(getKey(couponId));
+	}
 }

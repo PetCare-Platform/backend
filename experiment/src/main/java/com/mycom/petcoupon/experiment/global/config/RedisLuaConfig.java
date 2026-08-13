@@ -21,7 +21,7 @@ public class RedisLuaConfig {
         		
         		-- 재고가 소진된 경우
                 if tonumber(stock) <= 0 then
-                    return 0
+                    return -2
                 end
 
                 -- 재고 차감

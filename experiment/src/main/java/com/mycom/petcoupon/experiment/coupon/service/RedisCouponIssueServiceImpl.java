@@ -5,55 +5,59 @@ import org.springframework.stereotype.Service;
 import com.mycom.petcoupon.experiment.coupon.dto.CouponIssueRequest;
 import com.mycom.petcoupon.experiment.coupon.dto.CouponIssueResponse;
 import com.mycom.petcoupon.experiment.coupon.dto.CouponIssueResult;
-import com.mycom.petcoupon.experiment.coupon.redis.RedisCouponQueueProcessor;
-import com.mycom.petcoupon.experiment.coupon.redis.RedisCouponQueueService;
+import com.mycom.petcoupon.experiment.coupon.redis.RedisCouponStockService;
+import com.mycom.petcoupon.experiment.coupon.repository.CouponRepository;
 import com.mycom.petcoupon.experiment.coupon.type.CouponIssueStrategy;
 import com.mycom.petcoupon.experiment.global.exception.ExperimentErrorCode;
 import com.mycom.petcoupon.experiment.global.exception.GeneralException;
+import com.mycom.petcoupon.experiment.issue.entity.CouponIssue;
 import com.mycom.petcoupon.experiment.issue.repository.CouponIssueRepository;
+import com.mycom.petcoupon.experiment.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class RedisCouponIssueServiceImpl implements CouponIssueService {
+	
+	private final RedisCouponStockService redisCouponStockService;
 
-	private final RedisCouponQueueService redisCouponQueueService;
-	private final RedisCouponQueueProcessor redisCouponQueueProcessor;
-	
-	private final CouponIssueRepository couponIssueRepository;
-	
+    private final CouponIssueRepository couponIssueRepository;
+    private final CouponRepository couponRepository;
+    private final UserRepository userRepository;
     
     @Override
     public CouponIssueResponse issue(Long couponId, CouponIssueRequest request) {
     	
     	rejectDuplicate(couponId, request);
     	
-    	// Redis Queue 등록 
-    	redisCouponQueueService.enqueue(
-                couponId,
-                request.userId(),
-                request.requestId()
-        );
+    	// Redis Lua를 이용한 원자적 재고 차감
+        Long result = redisCouponStockService.decreaseStock(couponId);
     	
-    	// Queue 에 들어온 요청들을 순서대로 처리
-    	redisCouponQueueProcessor.processAll(couponId);
-    	
-    	boolean issued = couponIssueRepository.existsByRequestId(request.requestId());
-
-        if (!issued) {
-        	return CouponIssueResponse.builder()
-                    .couponId(couponId)
-                    .userId(request.userId())
-                    .requestId(request.requestId())
-                    .result(CouponIssueResult.WAITING)
-                    .build();
+     // Redis 재고 키 없음
+        if (result == -1) {
+            throw new GeneralException(ExperimentErrorCode.COUPON_NOT_FOUND);
         }
 
-        return CouponIssueResponse.success(
-                couponId,
-                request
+        // 재고 소진
+        if (result == -2) {
+            throw new GeneralException(ExperimentErrorCode.SOLD_OUT);
+        }
+        
+        couponIssueRepository.save(
+                CouponIssue.builder()
+                        .coupon(couponRepository.getReferenceById(couponId))
+                        .user(userRepository.getReferenceById(request.userId()))
+                        .requestId(request.requestId())
+                        .build()
         );
+        
+        return CouponIssueResponse.builder()
+        		.couponId(couponId)
+        		.userId(request.userId())
+        		.requestId(request.requestId())
+        		.result(CouponIssueResult.WAITING)
+        		.build();
     }
 
     @Override

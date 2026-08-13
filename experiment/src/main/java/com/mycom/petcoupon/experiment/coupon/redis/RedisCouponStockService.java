@@ -16,4 +16,6 @@ public interface RedisCouponStockService {
 	
 	// Redis 재고 삭제
 	void delete(Long couponId);
+	
+	Long increaseStock(Long couponId);
 }
