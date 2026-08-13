@@ -42,7 +42,8 @@
 |---|---:|
 | 초기 쿠폰 재고 | 100 |
 | 전체 요청 수 | 200 |
-| Worker 수 | 200 |
+| VU 수 | 200 |
+| 총 Iteration 수 | 200 |
 | 사용자 수 | 200 |
 | 요청별 userId | Unique |
 | 요청별 requestId | Unique |
@@ -51,13 +52,13 @@
 
 # 3. 전체 결과
 
-| 전략 | 성공 | 실패 | 최종 재고 | Issue Row | 정합성 | 전체 시간 | 평균 Latency | 최대 Latency |
-|---|---:|---:|---:|---:|---|---:|---:|---:|
-| DIRECT | - | - | - | - | - | - | - | - |
-| PESSIMISTIC | - | - | - | - | - | - | - | - |
-| OPTIMISTIC | - | - | - | - | - | - | - | - |
-| CONDITIONAL | - | - | - | - | - | - | - | - |
-| REDIS | - | - | - | - | - | - | - | - |
+| 전략 | SUCCESS | SOLD_OUT | 중복 | 시스템 오류 | req/s | avg | p95 | p99 | issueCount | issuedQuantity | remainingQuantity | 정합성 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| DIRECT | - | - | - | - | - | - | - | - | - | - | - | - |
+| PESSIMISTIC | - | - | - | - | - | - | - | - | - | - | - | - |
+| OPTIMISTIC | - | - | - | - | - | - | - | - | - | - | - | - |
+| CONDITIONAL | - | - | - | - | - | - | - | - | - | - | - | - |
+| REDIS | - | - | - | - | - | - | - | - | - | - | - | - |
 
 ---
 
@@ -69,6 +70,8 @@
 
 `DIRECT` 결과는 다른 동시성 제어 전략의 비교 기준선으로 사용한다.
 
+`DIRECT`는 동시성 제어가 없는 비교 기준이므로 성공 100건과 매진 100건을 기대 결과로 강제하지 않는다. 초과 발급, 갱신 유실(Lost Update), 재고와 발급 이력의 불일치 여부를 관찰한다.
+
 ---
 
 ## 4.2 실험 결과
@@ -76,25 +79,32 @@
 | 항목 | 결과 |
 |---|---:|
 | 전체 요청 | 200 |
-| 성공 | |
-| 실패 | |
-| 최종 재고 | |
-| Issue Row | |
+| SUCCESS | - |
+| SOLD_OUT | - |
+| DUPLICATE_REQUEST | - |
+| DUPLICATE_USER | - |
+| INTERNAL_ERROR | - |
+| req/s | - |
+| 평균 응답시간 | - |
+| p90 | - |
+| p95 | - |
+| p99 | - |
+| 최대 응답시간 | - |
+| issueCount | - |
+| issuedQuantity | - |
+| remainingQuantity | - |
 | consistent | |
-| 전체 실행 시간 | |
-| 평균 Latency | |
-| 최대 Latency | |
 
 ---
 
 ## 4.3 정합성 검증
 
-- [ ] 초과 발급 없음
-- [ ] `remainingQuantity >= 0`
-- [ ] `issueCount == totalQuantity - remainingQuantity`
 - [ ] `issuedQuantity == issueCount`
-- [ ] 동일 사용자 중복 없음
-- [ ] 동일 requestId 중복 없음
+- [ ] `remainingQuantity == totalQuantity - issueCount`
+- [ ] `issuedQuantity + remainingQuantity == totalQuantity`
+- [ ] `remainingQuantity >= 0`
+- [ ] 동일 `(coupon_id, user_id)` 중복 발급 0건
+- [ ] 동일 `request_id` 중복 발급 0건
 
 ---
 
@@ -123,25 +133,32 @@ DB의 `PESSIMISTIC_WRITE`를 사용하여 동일한 `CouponStock`에 대한 변�
 | 항목 | 결과 |
 |---|---:|
 | 전체 요청 | 200 |
-| 성공 | |
-| 실패 | |
-| 최종 재고 | |
-| Issue Row | |
+| SUCCESS | - |
+| SOLD_OUT | - |
+| DUPLICATE_REQUEST | - |
+| DUPLICATE_USER | - |
+| INTERNAL_ERROR | - |
+| req/s | - |
+| 평균 응답시간 | - |
+| p90 | - |
+| p95 | - |
+| p99 | - |
+| 최대 응답시간 | - |
+| issueCount | - |
+| issuedQuantity | - |
+| remainingQuantity | - |
 | consistent | |
-| 전체 실행 시간 | |
-| 평균 Latency | |
-| 최대 Latency | |
 
 ---
 
 ## 5.3 정합성 검증
 
-- [ ] 성공 건수가 최초 재고 이하
-- [ ] 최종 재고가 음수가 아님
-- [ ] 발급 건수와 재고 차감 수 일치
-- [ ] Issue Row 수와 발급 수량 일치
-- [ ] 중복 사용자 발급 없음
-- [ ] 중복 requestId 없음
+- [ ] `issuedQuantity == issueCount`
+- [ ] `remainingQuantity == totalQuantity - issueCount`
+- [ ] `issuedQuantity + remainingQuantity == totalQuantity`
+- [ ] `remainingQuantity >= 0`
+- [ ] 동일 `(coupon_id, user_id)` 중복 발급 0건
+- [ ] 동일 `request_id` 중복 발급 0건
 
 ---
 
@@ -181,15 +198,23 @@ DB의 `PESSIMISTIC_WRITE`를 사용하여 동일한 `CouponStock`에 대한 변�
 | 항목 | 결과 |
 |---|---:|
 | 전체 요청 | |
-| 성공 | |
-| 실패 | |
+| SUCCESS | - |
+| SOLD_OUT | - |
+| DUPLICATE_REQUEST | - |
+| DUPLICATE_USER | - |
+| INTERNAL_ERROR | - |
+| req/s | - |
+| 평균 응답시간 | - |
+| p90 | - |
+| p95 | - |
+| p99 | - |
+| 최대 응답시간 | - |
 | Retry | |
 | Optimistic Lock 충돌 | |
-| 최종 재고 | |
-| Issue Row | |
+| issueCount | - |
+| issuedQuantity | - |
+| remainingQuantity | - |
 | consistent | |
-| 전체 실행 시간 | |
-| 평균 Latency | |
 
 ## 6.2 분석
 
@@ -207,15 +232,23 @@ DB의 `PESSIMISTIC_WRITE`를 사용하여 동일한 `CouponStock`에 대한 변�
 | 항목 | 결과 |
 |---|---:|
 | 전체 요청 | |
-| 성공 | |
-| 실패 | |
+| SUCCESS | - |
+| SOLD_OUT | - |
+| DUPLICATE_REQUEST | - |
+| DUPLICATE_USER | - |
+| INTERNAL_ERROR | - |
+| req/s | - |
+| 평균 응답시간 | - |
+| p90 | - |
+| p95 | - |
+| p99 | - |
+| 최대 응답시간 | - |
 | 조건부 UPDATE 성공 | |
 | 조건부 UPDATE 실패 | |
-| 최종 재고 | |
-| Issue Row | |
+| issueCount | - |
+| issuedQuantity | - |
+| remainingQuantity | - |
 | consistent | |
-| 전체 실행 시간 | |
-| 평균 Latency | |
 
 ## 7.2 분석
 
@@ -233,14 +266,22 @@ DB의 `PESSIMISTIC_WRITE`를 사용하여 동일한 `CouponStock`에 대한 변�
 | 항목 | 결과 |
 |---|---:|
 | 전체 요청 | |
-| 성공 | |
-| 실패 | |
+| SUCCESS | - |
+| SOLD_OUT | - |
+| DUPLICATE_REQUEST | - |
+| DUPLICATE_USER | - |
+| INTERNAL_ERROR | - |
+| req/s | - |
+| 평균 응답시간 | - |
+| p90 | - |
+| p95 | - |
+| p99 | - |
+| 최대 응답시간 | - |
 | Redis 최종 재고 | |
-| DB 최종 재고 | |
-| Issue Row | |
+| issueCount | - |
+| issuedQuantity | - |
+| DB remainingQuantity | - |
 | consistent | |
-| 전체 실행 시간 | |
-| 평균 Latency | |
 
 ## 8.2 Redis / DB 정합성
 
@@ -274,13 +315,13 @@ DB Remaining Quantity
 
 # 10. 전략별 성능 비교
 
-| 전략 | 전체 시간 | 평균 Latency | 최대 Latency | 처리량 |
-|---|---:|---:|---:|---:|
-| DIRECT | - | - | - | - |
-| PESSIMISTIC | - | - | - | - |
-| OPTIMISTIC | - | - | - | - |
-| CONDITIONAL | - | - | - | - |
-| REDIS | - | - | - | - |
+| 전략 | req/s | avg | p90 | p95 | p99 | max | 시스템 오류율 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| DIRECT | - | - | - | - | - | - | - |
+| PESSIMISTIC | - | - | - | - | - | - | - |
+| OPTIMISTIC | - | - | - | - | - | - | - |
+| CONDITIONAL | - | - | - | - | - | - | - |
+| REDIS | - | - | - | - | - | - | - |
 
 ---
 
@@ -410,7 +451,7 @@ DB Remaining Quantity
 
 - [ ] 요청 수 증가 실험
 - [ ] 재고 수 증가/감소 실험
-- [ ] Worker 수 변경
+- [ ] VU 수 변경
 - [ ] 동일 사용자 중복 요청 실험
 - [ ] 동일 requestId 동시 요청 실험
 - [ ] 반복 실행에 따른 결과 편차 확인
