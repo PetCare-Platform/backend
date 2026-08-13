@@ -34,11 +34,11 @@
 
 - [실험 공통 코드 구조](./common-code.md)
 - [동시성 실험 결과](./experiment-results.md)
-- [DIRECT](docs/strategies/direct.md)
-- [PESSIMISTIC](docs/strategies/pessimistic.md)
-- [OPTIMISTIC](docs/strategies/optimistic.md)
-- [CONDITIONAL](docs/strategies/conditional.md)
-- [REDIS](docs/strategies/redis.md)
+- [DIRECT](./strategies/direct.md)
+- [PESSIMISTIC](./strategies/pessimistic.md)
+- [OPTIMISTIC](./strategies/optimistic.md)
+- [CONDITIONAL](./strategies/conditional.md)
+- [REDIS](./strategies/redis.md)
 
 ## 3. 비교 원칙
 
