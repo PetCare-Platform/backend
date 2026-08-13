@@ -13,8 +13,9 @@ import com.mycom.petcoupon.experiment.coupon.entity.Coupon;
 import com.mycom.petcoupon.experiment.coupon.entity.CouponStock;
 import com.mycom.petcoupon.experiment.coupon.repository.CouponRepository;
 import com.mycom.petcoupon.experiment.coupon.repository.CouponStockRepository;
-import com.mycom.petcoupon.experiment.global.exception.CouponNotFoundException;
-import com.mycom.petcoupon.experiment.global.exception.InvalidExperimentRequestException;
+import com.mycom.petcoupon.experiment.global.exception.CommonErrorCode;
+import com.mycom.petcoupon.experiment.global.exception.ExperimentErrorCode;
+import com.mycom.petcoupon.experiment.global.exception.GeneralException;
 import com.mycom.petcoupon.experiment.issue.repository.CouponIssueRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class CouponExperimentServiceImpl implements CouponExperimentService {
     @Override
     public CreateCouponResponse create(CreateCouponRequest request) {
         if (request == null || request.quantity() == null || request.quantity() <= 0) {
-            throw new InvalidExperimentRequestException("quantity must be greater than zero");
+        	throw new GeneralException(CommonErrorCode.BAD_REQUEST);
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -89,7 +90,7 @@ public class CouponExperimentServiceImpl implements CouponExperimentService {
 
     private CouponStock findStock(Long couponId) {
         return couponStockRepository.findById(couponId)
-                .orElseThrow(() -> new CouponNotFoundException(couponId));
+                .orElseThrow(() -> new GeneralException(ExperimentErrorCode.COUPON_NOT_FOUND));
     }
 
 }
