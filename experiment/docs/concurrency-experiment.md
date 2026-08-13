@@ -32,7 +32,6 @@
 
 각 전략의 구현 원리와 세부 코드 구조는 별도 문서에서 다룹니다.
 
-- [동시성 실험 설계](./concurrency-experiment.md)
 - [실험 공통 코드 구조](./common-code.md)
 - [동시성 실험 결과](./experiment-results.md)
 
