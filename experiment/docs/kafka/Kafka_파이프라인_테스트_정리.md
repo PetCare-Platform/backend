@@ -46,10 +46,12 @@ com.mycom.petcoupon.experiment
 
 ### 1-4. 장애 대응: 재시도 + 최종 실패 처리
 
-- 역직렬화 실패 등으로 메시지 처리가 안 될 경우, `ErrorHandlingDeserializer`로 감싸서 예외를 컨테이너 에러 핸들러로 정상 위임
+- 역직렬화 실패 시 `ErrorHandlingDeserializer`로 감싸서 예외를 컨테이너 에러 핸들러로 정상 위임
 - `DefaultErrorHandler` + `FixedBackOff(1000L, 2L)`: 1초 간격으로 2회 재시도
-- 재시도 소진 시 `CouponIssueEventRecoverer`가 `log.error`로 상세 원인(예외 스택트레이스 포함) 기록 + Redis 키 `kafka:coupon-issue-event:fail-count` INCR
-- 팀 논의 결과대로 "로그 → 재시도 → 최종 실패 시 로그+Redis 카운터" 방식으로 결정
+- **주의**: 이 재시도는 **역직렬화 실패에는 적용되지 않습니다.** 같은 바이트는 재시도해도 항상 똑같이 실패하는 결정론적 오류라, Spring Kafka 프레임워크가 `DeserializationException`을 재시도 대상에서 자동 제외하고 바로 recoverer로 넘깁니다. 재시도가 실제로 적용되는 건 역직렬화는 성공했지만 **리스너 로직(비즈니스 처리) 중 예외**가 난 경우(DB 저장 실패 등 일시적 오류)입니다.
+- 최종 실패 시(재시도 대상이든 즉시 recoverer로 넘어간 역직렬화 실패든) `CouponIssueEventRecoverer`가 `log.error`로 상세 원인(예외 스택트레이스 포함) 기록 + Redis 키 `kafka:coupon-issue-event:fail-count` INCR
+- Redis 자체가 장애 상태라 INCR이 실패하는 경우까지 대비해서, Redis 호출은 try-catch로 감싸 별도 로그만 남기고 예외를 밖으로 던지지 않도록 처리 (recoverer가 예외를 던지면 Kafka가 해당 레코드를 "복구 실패"로 보고 offset이 안 넘어가서 같은 메시지가 무한 반복될 수 있음)
+- 팀 논의 결과대로 "로그 → (해당 시) 재시도 → 최종 실패 시 로그+Redis 카운터" 방식으로 결정
 
 ### 1-5. `application.properties`
 
@@ -78,11 +80,11 @@ spring.kafka.consumer.group-id=petcoupon-experiment
    {"couponId":1,"userId":1,"requestId":"manual-test","issuedAt":"2026-08-13T12:00:00"}
    ```
    → 앱 콘솔에서 `[CouponIssueEvent] 수신: ...` 로그 확인
-5. **깨진 메시지로 재시도/복구 테스트** (같은 프로듀서 세션에 이어서):
+5. **깨진 메시지로 복구 테스트** (같은 프로듀서 세션에 이어서):
    ```
    this-is-not-valid-json
    ```
-   → 1초 간격 재시도 로그 → `[CouponIssueEvent] 최종 처리 실패: partition=..., offset=...` 로그 확인
+   → 역직렬화 실패라 재시도 없이 바로 `[CouponIssueEvent] 최종 처리 실패: partition=..., offset=...` 로그 확인 (재시도 로그는 안 뜨는 게 정상)
 6. **Redis 카운터 확인**:
    ```
    redis-cli get kafka:coupon-issue-event:fail-count
