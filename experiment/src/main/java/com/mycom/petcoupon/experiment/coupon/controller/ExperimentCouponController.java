@@ -16,6 +16,7 @@ import com.mycom.petcoupon.experiment.coupon.dto.CouponIssueResponse;
 import com.mycom.petcoupon.experiment.coupon.dto.CouponStatusResponse;
 import com.mycom.petcoupon.experiment.coupon.dto.CreateCouponRequest;
 import com.mycom.petcoupon.experiment.coupon.dto.CreateCouponResponse;
+import com.mycom.petcoupon.experiment.coupon.redis.RedisCouponStockService;
 import com.mycom.petcoupon.experiment.coupon.service.CouponExperimentService;
 import com.mycom.petcoupon.experiment.coupon.service.CouponIssueServiceResolver;
 import com.mycom.petcoupon.experiment.coupon.type.CouponIssueStrategy;
@@ -31,6 +32,9 @@ public class ExperimentCouponController {
 
     private final CouponExperimentService experimentCouponService;
     private final CouponIssueServiceResolver couponIssueServiceResolver;
+    
+    private final RedisCouponStockService redisCouponStockService;
+    
 
     @PostMapping("/coupons")
     @ResponseStatus(HttpStatus.CREATED)
@@ -54,5 +58,17 @@ public class ExperimentCouponController {
     @PostMapping("/coupons/{couponId}/reset")
     public CouponStatusResponse reset(@PathVariable("couponId") Long couponId) {
         return experimentCouponService.reset(couponId);
+    }
+    
+    // Redis 재고를 초기화
+    @PostMapping("/coupons/{couponId}/redis/init")
+    public void initializeRedis(@PathVariable("couponId") Long couponId) {
+    	redisCouponStockService.initialize(couponId);
+    }
+    
+    // Redis에 저장된 현재 재고 조회
+    @GetMapping("/coupons/{couponId}/redis-stock")
+    public Long getRedisStock(@PathVariable("couponId") Long couponId) {
+        return redisCouponStockService.getRemainingStock(couponId);
     }
 }

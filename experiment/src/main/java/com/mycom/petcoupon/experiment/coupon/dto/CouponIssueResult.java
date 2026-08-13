@@ -7,5 +7,6 @@ public enum CouponIssueResult {
     DUPLICATE_USER,
     COUPON_NOT_FOUND,
     INVALID_REQUEST,
-    INTERNAL_ERROR
+    INTERNAL_ERROR,
+    WAITING
 }
