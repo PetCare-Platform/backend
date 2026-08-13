@@ -29,4 +29,14 @@ public interface CouponStockRepository extends JpaRepository<CouponStock, Long> 
             + "stock.updatedAt = CURRENT_TIMESTAMP "
             + "where stock.couponId = :couponId and stock.version = :version")
     int issueIfVersionMatches(@Param("couponId") Long couponId, @Param("version") Long version);
+
+    // 조건부 UPDATE: 버전 없이, 재고가 남아있는지(remainingQuantity > 0)를 WHERE절에서 직접 체크한다.
+    // 이 조건 자체가 원자적으로 평가되므로 재시도가 필요 없다 — 실패하면 그 시점에 정말 재고가 없는 것.
+    @Modifying(clearAutomatically = true)
+    @Query("update CouponStock stock "
+            + "set stock.issuedQuantity = stock.issuedQuantity + 1, "
+            + "stock.remainingQuantity = stock.remainingQuantity - 1, "
+            + "stock.updatedAt = CURRENT_TIMESTAMP "
+            + "where stock.couponId = :couponId and stock.remainingQuantity > 0")
+    int issueIfStockAvailable(@Param("couponId") Long couponId);
 }
