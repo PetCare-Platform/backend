@@ -15,8 +15,8 @@
 -- 컬럼도 이번 테스트와 무관한 건 뺐음 (discount_type 등 쿠폰 비즈니스 필드, event_id FK,
 -- sequence_no — Redis 시나리오에서 필요해지면 그때 추가)
 --
--- 대상 DB: MySQL 8.0+ (recursive CTE 사용)
--- 규모: 회원 200명 / 쿠폰당 재고 100장, 시나리오별 쿠폰 5개
+-- 대상 DB: MySQL 8.0+
+-- 규모: 회원 20,000명 / 쿠폰당 재고 100장, 시나리오별 쿠폰 5개
 -- ============================================================
 
 DROP TABLE IF EXISTS issue_attempt_log;
@@ -109,22 +109,44 @@ CREATE TABLE issue_attempt_log (
 CREATE INDEX idx_log_coupon ON issue_attempt_log (coupon_id, attempted_at);
 
 -- ============================================================
--- 더미 데이터: 회원 200명
+-- 더미 데이터: 회원 20,000명
 -- ============================================================
 INSERT INTO app_user (login_id, name, email)
-WITH RECURSIVE seq AS (
-    SELECT 1 AS n
-    UNION ALL
-    SELECT n + 1 FROM seq WHERE n < 200
+WITH digits AS (
+    SELECT 0 AS d UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+    UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9
+),
+seq AS (
+    SELECT
+        ones.d
+        + tens.d * 10
+        + hundreds.d * 100
+        + thousands.d * 1000
+        + ten_thousands.d * 10000
+        + 1 AS n
+    FROM digits ones
+    CROSS JOIN digits tens
+    CROSS JOIN digits hundreds
+    CROSS JOIN digits thousands
+    CROSS JOIN digits ten_thousands
 )
 SELECT
     CONCAT('user', n),
     CONCAT('테스트회원', n),
     CONCAT('user', n, '@test.com')
-FROM seq;
+FROM seq
+WHERE n <= 20000
+ORDER BY n;
+
+-- 회원 더미 데이터 생성 결과 확인
+SELECT
+    COUNT(*) AS user_count,
+    MIN(user_id) AS min_user_id,
+    MAX(user_id) AS max_user_id
+FROM app_user;
 
 -- ============================================================
--- 더미 데이터: 시나리오별 쿠폰 5개 (각 재고 100장, 회원 200명 공통 사용)
+-- 더미 데이터: 시나리오별 쿠폰 5개 (각 재고 100장, 회원 20,000명 공통 사용)
 -- 1번 담당자는 비관적락/DB직접삽입 두 coupon_id로 모두 테스트
 -- ============================================================
 INSERT INTO coupon (name, issue_start_at, issue_end_at, limit_per_member, status) VALUES
