@@ -1,4 +1,10 @@
 services:
+  redis:
+    image: redis:7
+    container_name: petcoupon-redis
+    ports:
+      - "6379:6379"
+
   kafka:
     image: apache/kafka:3.7.0
     container_name: petcoupon-kafka
