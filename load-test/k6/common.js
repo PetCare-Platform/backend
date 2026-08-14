@@ -77,6 +77,26 @@ export function createCouponIssueTest(strategy) {
       );
     }
 
+    if (strategy === 'REDIS') {
+      const redisInitResponse = http.post(
+        `${baseUrl}/experiment/coupons/${couponId}/redis/init`,
+        null,
+        {
+          tags: { name: 'redis_init', strategy },
+        },
+      );
+
+      const redisInitialized = check(redisInitResponse, {
+        'Redis stock initialization succeeds': (res) => res.status === 200,
+      });
+
+      if (!redisInitialized) {
+        fail(
+          `Redis initialization failed: status=${redisInitResponse.status}, body=${redisInitResponse.body}`,
+        );
+      }
+    }
+
     return { couponId };
   }
 
@@ -113,7 +133,21 @@ export function createCouponIssueTest(strategy) {
       },
       'remaining stock is not negative': (res) => {
         const body = parseJson(res);
-        return body !== null && body.dbRemainingQuantity >= 0;
+
+        if (body === null) {
+          return false;
+        }
+
+        const remainingQuantity =
+          strategy === 'REDIS'
+            ? body.redisRemainingQuantity
+            : body.dbRemainingQuantity;
+
+        return (
+          remainingQuantity !== null &&
+          remainingQuantity !== undefined &&
+          remainingQuantity >= 0
+        );
       },
     });
 
