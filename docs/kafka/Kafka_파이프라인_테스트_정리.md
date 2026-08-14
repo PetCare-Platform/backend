@@ -4,7 +4,7 @@
 
 ## 1. 구현 내용
 
-### 1-1. 의존성 (`experiment/build.gradle`)
+### 1-1. 의존성 (`build.gradle`)
 
 ```gradle
 implementation 'org.springframework.kafka:spring-kafka'
@@ -16,7 +16,7 @@ implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 - `jackson-databind` (legacy): Spring Boot 4.1.0은 Jackson 3(`tools.jackson.*`)을 기본으로 쓰지만, `spring-kafka`의 `JsonSerializer`/`JsonDeserializer`는 아직 Jackson 2(`com.fasterxml.jackson.*`) API를 참조해서 명시적으로 추가 필요
 - `jackson-datatype-jsr310`: `LocalDateTime` 등 Java 8 날짜/시간 타입 직렬화 지원
 
-### 1-2. 로컬 브로커 (`experiment/docker-compose.yml`)
+### 1-2. 로컬 브로커 (`docker-compose.yml`)
 
 Kafka 단일 브로커, KRaft 모드(Zookeeper 없음), 이미지는 `apache/kafka:3.7.0` 사용.
 
