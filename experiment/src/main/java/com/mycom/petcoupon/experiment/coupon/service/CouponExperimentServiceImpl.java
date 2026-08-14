@@ -69,11 +69,11 @@ public class CouponExperimentServiceImpl implements CouponExperimentService {
                 && stock.getTotalQuantity() - stock.getRemainingQuantity() == issueCount;
         
         boolean redisConsistent =
-                redisRemainingQuantity == null
-                || stock.getTotalQuantity() - redisRemainingQuantity == issueCount;
+                redisRemainingQuantity != null
+                && stock.getTotalQuantity() - redisRemainingQuantity == issueCount;
 
         
-        boolean consistent = dbConsistent && redisConsistent;
+        boolean consistent = redisRemainingQuantity != null ? redisConsistent : dbConsistent;
 
         return CouponStatusResponse.builder()
                 .couponId(couponId)

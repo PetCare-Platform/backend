@@ -51,7 +51,9 @@ public class ExperimentCouponController {
     }
 
     @GetMapping("/coupons/{couponId}/status")
-    public CouponStatusResponse getStatus(@PathVariable("couponId") Long couponId) {
+    public CouponStatusResponse getStatus(
+    		@PathVariable("couponId") Long couponId
+    ) {
         return experimentCouponService.getStatus(couponId);
     }
 
