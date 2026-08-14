@@ -1,6 +1,8 @@
 package com.mycom.petcoupon.experiment.coupon.redis;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -24,16 +26,18 @@ public class RedisCouponStockServiceImpl implements RedisCouponStockService {
     
 	@Override
 	public void initialize(Long couponId) {
+		
 		CouponStock stock = couponStockRepository.findById(couponId)
 				.orElseThrow(() -> new GeneralException(ExperimentErrorCode.COUPON_NOT_FOUND));
 		
-		String key = getKey(couponId);
+		delete(couponId);
 		
-		redisTemplate.opsForValue().set(key, String.valueOf(stock.getRemainingQuantity()));
+		redisTemplate.opsForValue().set(getKey(couponId), String.valueOf(stock.getRemainingQuantity()));
 	}
 
 	@Override
 	public Long decreaseStock(Long couponId, String requestId, Long userId) {
+		
 		return redisTemplate.execute(
 				redisLuaConfig.decreaseStockScript(),
                 List.of(
@@ -84,11 +88,28 @@ public class RedisCouponStockServiceImpl implements RedisCouponStockService {
     	return "coupon:" + couponId + ":user:" + userId;
     }
     
-	@Override
-	public void delete(Long couponId) {
-		
-		redisTemplate.delete(getKey(couponId));
-	}
+    @Override
+    public void delete(Long couponId) {
+
+        Set<String> keys = new HashSet<>();
+
+        keys.add(getKey(couponId));
+
+        Set<String> requestKeys = redisTemplate.keys("coupon:" + couponId + ":request:*");
+        Set<String> userKeys = redisTemplate.keys("coupon:" + couponId + ":user:*");
+
+        if (requestKeys != null) {
+            keys.addAll(requestKeys);
+        }
+
+        if (userKeys != null) {
+            keys.addAll(userKeys);
+        }
+
+        if (!keys.isEmpty()) {
+            redisTemplate.delete(keys);
+        }
+    }
 
 	@Override
 	public Long increaseStock(Long couponId) {

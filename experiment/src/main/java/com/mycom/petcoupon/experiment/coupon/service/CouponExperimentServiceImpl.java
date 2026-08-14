@@ -11,6 +11,7 @@ import com.mycom.petcoupon.experiment.coupon.dto.CreateCouponRequest;
 import com.mycom.petcoupon.experiment.coupon.dto.CreateCouponResponse;
 import com.mycom.petcoupon.experiment.coupon.entity.Coupon;
 import com.mycom.petcoupon.experiment.coupon.entity.CouponStock;
+import com.mycom.petcoupon.experiment.coupon.redis.RedisCouponStockService;
 import com.mycom.petcoupon.experiment.coupon.repository.CouponRepository;
 import com.mycom.petcoupon.experiment.coupon.repository.CouponStockRepository;
 import com.mycom.petcoupon.experiment.global.exception.CommonErrorCode;
@@ -27,6 +28,8 @@ public class CouponExperimentServiceImpl implements CouponExperimentService {
     private final CouponStockRepository couponStockRepository;
     private final CouponIssueRepository couponIssueRepository;
     private final CouponRepository couponRepository;
+    
+    private final RedisCouponStockService redisCouponStockService;
 
     @Transactional
     @Override
@@ -58,14 +61,25 @@ public class CouponExperimentServiceImpl implements CouponExperimentService {
     public CouponStatusResponse getStatus(Long couponId) {
         CouponStock stock = findStock(couponId);
         long issueCount = couponIssueRepository.countByCoupon_Id(couponId);
-        boolean consistent = stock.getIssuedQuantity() == issueCount
+        
+        Long redisRemainingQuantity = redisCouponStockService.getRemainingStock(couponId);
+        
+        boolean dbConsistent =
+                stock.getIssuedQuantity() == issueCount
                 && stock.getTotalQuantity() - stock.getRemainingQuantity() == issueCount;
+        
+        boolean redisConsistent =
+                redisRemainingQuantity == null
+                || stock.getTotalQuantity() - redisRemainingQuantity == issueCount;
+
+        
+        boolean consistent = dbConsistent && redisConsistent;
 
         return CouponStatusResponse.builder()
                 .couponId(couponId)
                 .totalQuantity(stock.getTotalQuantity())
                 .dbRemainingQuantity(stock.getRemainingQuantity())
-                .redisRemainingQuantity(null)
+                .redisRemainingQuantity(redisRemainingQuantity)
                 .issueCount(issueCount)
                 .consistent(consistent)
                 .build();

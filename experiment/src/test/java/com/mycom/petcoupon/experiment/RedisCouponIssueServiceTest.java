@@ -18,8 +18,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.mycom.petcoupon.experiment.coupon.dto.CouponIssueRequest;
 import com.mycom.petcoupon.experiment.coupon.entity.Coupon;
+import com.mycom.petcoupon.experiment.coupon.entity.CouponStock;
 import com.mycom.petcoupon.experiment.coupon.redis.RedisCouponStockService;
 import com.mycom.petcoupon.experiment.coupon.repository.CouponRepository;
+import com.mycom.petcoupon.experiment.coupon.repository.CouponStockRepository;
 import com.mycom.petcoupon.experiment.coupon.service.RedisCouponIssueServiceImpl;
 import com.mycom.petcoupon.experiment.global.exception.ExperimentErrorCode;
 import com.mycom.petcoupon.experiment.global.exception.GeneralException;
@@ -48,6 +50,9 @@ class RedisCouponIssueServiceTest {
 
     @Autowired
     private CouponIssueRepository couponIssueRepository;
+    
+    @Autowired
+    private CouponStockRepository couponStockRepository;
 
     private Long couponId;
 
@@ -75,6 +80,13 @@ class RedisCouponIssueServiceTest {
         );
 
         couponId = coupon.getId();
+        
+        couponStockRepository.save(
+        		CouponStock.builder()
+	                .couponId(couponId)
+	                .quantity(3)
+	                .build()
+        );
 
         // 사용자 20명 생성
         userIds = new ArrayList<>();
@@ -366,5 +378,49 @@ class RedisCouponIssueServiceTest {
         		.findAllByCoupon_IdOrderByIdAsc(couponId);
 
         assertThat(issues).isEmpty();
+    }
+    
+    @Test
+    void Redis_초기화시_쿠폰의_중복방지_키도_삭제된다() {
+
+        // given
+        Long userId = userIds.get(0);
+        String requestId = "init-test-request";
+
+        // Redis에 기존 상태 생성
+        redisTemplate.opsForValue().set(stockService.getKey(couponId), "2");
+
+        redisTemplate.opsForValue()
+                .set(
+                        stockService.getRequestKey(couponId, requestId),
+                        requestId
+                );
+
+        redisTemplate.opsForValue()
+                .set(
+                        stockService.getUserKey(couponId, userId),
+                        String.valueOf(userId)
+                );
+
+        // when
+        stockService.initialize(couponId);
+
+        // then
+        assertThat(
+                redisTemplate.hasKey(
+                        stockService.getRequestKey(couponId, requestId)
+                )
+        ).isFalse();
+
+        assertThat(
+                redisTemplate.hasKey(
+                        stockService.getUserKey(couponId, userId)
+                )
+        ).isFalse();
+
+        // DB 재고 기준으로 다시 초기화됐는지 확인
+        Long remainingStock = stockService.getRemainingStock(couponId);
+
+        assertThat(remainingStock).isEqualTo(3);
     }
 }
