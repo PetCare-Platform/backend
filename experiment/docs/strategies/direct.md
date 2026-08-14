@@ -266,6 +266,6 @@ issue/
 
 관련 문서:
 
-- [동시성 실험 설계](./concurrency-experiment.md)
-- [실험 공통 코드 구조](./common-code.md)
-- [동시성 실험 결과](./experiment-results.md)
+- [동시성 실험 설계](../concurrency-experiment.md)
+- [실험 공통 코드 구조](../common-code.md)
+- [동시성 실험 결과](../experiment-results.md)
