@@ -3,11 +3,11 @@ package com.mycom.petcoupon.experiment.coupon.redis;
 import java.util.List;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 
 import com.mycom.petcoupon.experiment.coupon.entity.CouponStock;
 import com.mycom.petcoupon.experiment.coupon.repository.CouponStockRepository;
+import com.mycom.petcoupon.experiment.global.config.RedisLuaConfig;
 import com.mycom.petcoupon.experiment.global.exception.ExperimentErrorCode;
 import com.mycom.petcoupon.experiment.global.exception.GeneralException;
 
@@ -20,7 +20,7 @@ public class RedisCouponStockServiceImpl implements RedisCouponStockService {
 	private final StringRedisTemplate redisTemplate;
     private final CouponStockRepository couponStockRepository;
     
-    private final DefaultRedisScript<Long> decreaseStockScript;
+    private final RedisLuaConfig redisLuaConfig;
     
 	@Override
 	public void initialize(Long couponId) {
@@ -33,11 +33,30 @@ public class RedisCouponStockServiceImpl implements RedisCouponStockService {
 	}
 
 	@Override
-	public Long decreaseStock(Long couponId) {
+	public Long decreaseStock(Long couponId, String requestId, Long userId) {
 		return redisTemplate.execute(
-                decreaseStockScript,
-                List.of(getKey(couponId))
+				redisLuaConfig.decreaseStockScript(),
+                List.of(
+                		getKey(couponId),
+                		getRequestKey(couponId, requestId),
+                		getUserKey(couponId, userId)
+                		
+                ),
+                requestId, 
+                String.valueOf(userId)
         );
+	}
+	
+	@Override
+    public void restoreStock(Long couponId, String requestId, Long userId) {
+		redisTemplate.execute(
+				redisLuaConfig.restoreStockScript(),
+                List.of(
+                        getKey(couponId),
+                        getRequestKey(couponId, requestId),
+                        getUserKey(couponId, userId)
+                )
+		);
 	}
 	
 	@Override
@@ -53,7 +72,18 @@ public class RedisCouponStockServiceImpl implements RedisCouponStockService {
 		
 		return "coupon:stock:" + couponId;
 	}
+	@Override
+    public String getRequestKey(Long couponId, String requestId) {
+		
+        return "coupon:" + couponId + ":request:" + requestId;
+    }
 
+
+    @Override
+    public String getUserKey(Long couponId, Long userId) {
+    	return "coupon:" + couponId + ":user:" + userId;
+    }
+    
 	@Override
 	public void delete(Long couponId) {
 		

@@ -29,12 +29,10 @@ public class RedisCouponIssueServiceImpl implements CouponIssueService {
     @Override
     public CouponIssueResponse issue(Long couponId, CouponIssueRequest request) {
     	
-    	rejectDuplicate(couponId, request);
+    	Long result = redisCouponStockService.decreaseStock(couponId, request.requestId(), request.userId());
     	
-    	// Redis Lua를 이용한 원자적 재고 차감
-        Long result = redisCouponStockService.decreaseStock(couponId);
-    	
-     // Redis 재고 키 없음
+    
+    	// Redis 재고 키 없음
         if (result == -1) {
             throw new GeneralException(ExperimentErrorCode.COUPON_NOT_FOUND);
         }
@@ -44,33 +42,40 @@ public class RedisCouponIssueServiceImpl implements CouponIssueService {
             throw new GeneralException(ExperimentErrorCode.SOLD_OUT);
         }
         
-        couponIssueRepository.save(
-                CouponIssue.builder()
-                        .coupon(couponRepository.getReferenceById(couponId))
-                        .user(userRepository.getReferenceById(request.userId()))
-                        .requestId(request.requestId())
-                        .build()
-        );
+        // requestId 중복
+        if (result == -3) {
+            throw new GeneralException(ExperimentErrorCode.DUPLICATE_REQUEST);
+        }
+        
+        // 동일 사용자 중복
+        if (result == -4) {
+            throw new GeneralException(ExperimentErrorCode.DUPLICATE_USER);
+        }
+
+        
+        try {
+        	couponIssueRepository.saveAndFlush(
+                    CouponIssue.builder()
+                            .coupon(couponRepository.getReferenceById(couponId))
+                            .user(userRepository.getReferenceById(request.userId()))
+                            .requestId(request.requestId())
+                            .build()
+            );
+        } catch (Exception e) {
+        	redisCouponStockService.restoreStock(couponId, request.requestId(), request.userId());
+        	throw e;
+		}
         
         return CouponIssueResponse.builder()
         		.couponId(couponId)
         		.userId(request.userId())
         		.requestId(request.requestId())
-        		.result(CouponIssueResult.WAITING)
+        		.result(CouponIssueResult.SUCCESS)
         		.build();
     }
 
     @Override
     public CouponIssueStrategy supports() {
         return CouponIssueStrategy.REDIS;
-    }
-    
-    private void rejectDuplicate(Long couponId, CouponIssueRequest request) {
-    	if (couponIssueRepository.existsByRequestId(request.requestId())) {
-    		throw new GeneralException(ExperimentErrorCode.DUPLICATE_REQUEST);
-    	}
-    	if (couponIssueRepository.existsByCoupon_IdAndUser_Id(couponId, request.userId())) {
-            throw new GeneralException(ExperimentErrorCode.DUPLICATE_USER);
-        }
     }
 }

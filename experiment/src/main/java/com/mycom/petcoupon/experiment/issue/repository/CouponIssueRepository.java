@@ -1,7 +1,6 @@
 package com.mycom.petcoupon.experiment.issue.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -16,9 +15,6 @@ public interface CouponIssueRepository extends JpaRepository<CouponIssue, Long> 
 	long countByCoupon_Id(Long couponId);
 
 	long deleteByCoupon_Id(Long couponId);
-
-	// 요청 ID로 발급 내역 조회
-//	Optional<CouponIssue> findByRequestId(String requestId);
 
 	// 쿠폰 발급 내역 조회
 	List<CouponIssue> findAllByCoupon_IdOrderByIdAsc(Long couponId);
