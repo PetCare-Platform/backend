@@ -3,6 +3,8 @@
 선착순 쿠폰 발급 과정에서 발생하는 동시성 문제를 확인하고,
 여러 동시성 제어 방식을 동일한 조건에서 비교하기 위한 실험 모듈입니다.
 
+> **멘토링 질문:** [프로젝트 멘토링 질문](docs/mentoring-questions.md)
+
 동시성 실험의 설계, 공통 코드 구조, 실험 결과에 대한 상세 내용은
 아래 문서에서 확인할 수 있습니다.
 
@@ -11,6 +13,7 @@
 - [동시성 실험 설계](docs/concurrency-experiment.md)
 - [실험 공통 코드 구조](docs/common-code.md)
 - [동시성 실험 결과](docs/experiment-results.md)
+- [프로젝트 멘토링 질문](docs/mentoring-questions.md)
 
 
 ## Tech Stack
