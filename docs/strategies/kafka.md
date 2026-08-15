@@ -48,11 +48,13 @@ com.mycom.petcoupon.experiment
 
 | 구성 요소 | 현재 동작 |
 | --- | --- |
-| `KafkaConfig` | 브로커 연결, 토픽 자동 생성, 재시도(`FixedBackOff(1000L, 2L)`) + 역직렬화 예외 처리까지 구성 완료 |
+| `KafkaConfig` | 브로커 연결, 토픽 자동 생성, 재시도(`FixedBackOff(1000L, 2L)`) + 역직렬화 예외 처리까지 구성 완료. 토픽 파티션 수(3)에 맞춰 Consumer `concurrency=3` 설정 |
 | `KafkaCouponIssueServiceImpl` | `RedisCouponStockService.decreaseStock()`으로 재고 차감(4가지 실패 코드 처리는 `RedisCouponIssueServiceImpl`과 동일) 후 **DB 저장 없이** `CouponIssueEventProducer.publishCouponIssueEvent()` 호출, 응답은 `CouponIssueResult.WAITING` |
-| `CouponIssueEventProducer` | `publishCouponIssueEvent()` — `KafkaCouponIssueServiceImpl`에서 재고 차감 성공 직후 호출됨 |
+| `CouponIssueEventProducer` | `publishCouponIssueEvent()` — `KafkaCouponIssueServiceImpl`에서 재고 차감 성공 직후 호출됨. 발행 자체가 실패하면(`whenComplete`의 실패 콜백) Consumer/Recoverer가 그 이벤트를 영영 볼 수 없으므로 여기서 직접 `restoreStock()`으로 재고 보상 |
 | `CouponIssueEventConsumer` | 수신 시 `CouponIssue` 저장. 동일 `requestId` 재전달은 `existsByRequestId()`로 스킵. `saveAndFlush()`가 `DataIntegrityViolationException`을 던지면 `existsByRequestId()`로 재확인해서 — 이미 저장된 재전달이면 보상 없이 스킵, 아니면(예: 존재하지 않는 coupon/user FK 위반) `restoreStock()`으로 재고 보상 |
 | `CouponIssueEventRecoverer` | 재시도(3회) 모두 실패 시 원인 로그 + Redis 실패 카운터 증가 + `RedisCouponStockService.restoreStock()`으로 차감된 재고 보상까지 수행 |
+
+재고 보상은 이렇게 Producer/Consumer/Recoverer 세 경로에서 호출될 수 있어, `RedisLuaConfig.restoreStockScript()`는 `requestId` 예약 키가 남아있을 때만 복구하도록 멱등하게 구현돼 있습니다. 같은 요청이 여러 경로에서 중복 보상되더라도 재고가 실제 차감량보다 더 늘어나지 않습니다.
 
 정리하면, **Redis 재고 차감 → 이벤트 발행 → Consumer 비동기 저장까지 정상 흐름과, DB 저장 실패(일시적 장애/제약 위반) 시 재고 보상까지 실제 인프라(docker-compose mysql/redis/kafka)에서 검증 완료**됐습니다. 자동화 테스트는 `KafkaCouponIssueServiceTest`(동시성 재고 제한, 중복 requestId, 중복 user, FK 위반 시 재고 보상)를 참고합니다.
 
