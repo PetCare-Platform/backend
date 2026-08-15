@@ -92,6 +92,7 @@ public class KafkaConfig {
         factory.setConsumerFactory(couponIssueEventConsumerFactory);
         factory.setCommonErrorHandler(
                 new DefaultErrorHandler(couponIssueEventRecoverer, new FixedBackOff(1000L, 2L)));
+        factory.setConcurrency(3);
         return factory;
     }
 }

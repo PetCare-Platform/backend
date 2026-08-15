@@ -58,6 +58,11 @@ public class RedisLuaConfig {
     public DefaultRedisScript<Long> restoreStockScript() {
 
         String script = """
+                -- requestId 예약 키가 없으면 이미 복구됐거나 애초에 예약된 적이 없는 것이므로 아무것도 하지 않음
+                if redis.call('EXISTS', KEYS[2]) == 0 then
+                    return 0
+                end
+
                 redis.call('INCR', KEYS[1])
                 redis.call('DEL', KEYS[2])
                 redis.call('DEL', KEYS[3])
