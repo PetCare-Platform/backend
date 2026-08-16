@@ -1,5 +1,5 @@
 import http from 'k6/http';
-import { check, fail } from 'k6';
+import { check, fail, sleep } from 'k6';
 import exec from 'k6/execution';
 import { Counter, Rate } from 'k6/metrics';
 
@@ -9,6 +9,8 @@ export function createCouponIssueTest(strategy) {
   const vus = Number(__ENV.VUS || 20);
   const iterations = Number(__ENV.ITERATIONS || 20);
   const userIdStart = Number(__ENV.USER_ID_START || 1);
+  const kafkaWaitTimeout = Number(__ENV.KAFKA_WAIT_TIMEOUT || 30);
+  const kafkaPollInterval = Number(__ENV.KAFKA_POLL_INTERVAL || 1);
   // k6의 init 코드는 VU마다 실행되므로 Date.now()를 기본값으로 사용하지 않는다.
   const runId = __ENV.RUN_ID || 'local-run';
   const resultFile =
@@ -54,6 +56,9 @@ export function createCouponIssueTest(strategy) {
       'http_req_failed{name:coupon_issue}': ['rate<0.01'],
     },
     summaryTrendStats: ['avg', 'min', 'med', 'p(90)', 'p(95)', 'p(99)', 'max'],
+    // KAFKA는 teardown에서 Consumer의 DB 저장 완료까지 폴링하므로 k6 기본값 60초로는 부족하다.
+    // KAFKA_WAIT_TIMEOUT보다 항상 크도록 여기서 함께 계산한다.
+    teardownTimeout: `${kafkaWaitTimeout + 60}s`,
   };
 
   function setup() {
@@ -77,7 +82,7 @@ export function createCouponIssueTest(strategy) {
       );
     }
 
-    if (strategy === 'REDIS') {
+    if (usesRedisStock()) {
       const redisInitResponse = http.post(
         `${baseUrl}/experiment/coupons/${couponId}/redis/init`,
         null,
@@ -97,7 +102,16 @@ export function createCouponIssueTest(strategy) {
       }
     }
 
-    return { couponId };
+    const resetBody = parseJson(response);
+
+    if (resetBody === null || !Number.isInteger(resetBody.totalQuantity)) {
+      fail(`Invalid coupon reset response: body=${response.body}`);
+    }
+
+    return {
+      couponId,
+      totalQuantity: resetBody?.totalQuantity,
+    };
   }
 
   function run(data) {
@@ -118,18 +132,51 @@ export function createCouponIssueTest(strategy) {
   }
 
   function teardown(data) {
-    const response = http.get(
-      `${baseUrl}/experiment/coupons/${data.couponId}/status`,
-      {
-        tags: { name: 'coupon_status', strategy },
-      },
-    );
+    let response;
+
+    if (strategy === 'KAFKA') {
+      const expectedIssueCount = Math.min(data.totalQuantity, iterations);
+
+      for (
+        let elapsed = 0;
+        elapsed < kafkaWaitTimeout;
+        elapsed += kafkaPollInterval
+      ) {
+        response = getCouponStatus(data.couponId);
+        const body = parseJson(response);
+
+        // WAITING은 접수 성공일 뿐이므로 Consumer의 DB 저장 완료까지 기다린다.
+        if (
+          body !== null &&
+          body.consistent === true &&
+          body.issueCount === expectedIssueCount
+        ) {
+          break;
+        }
+
+        sleep(kafkaPollInterval);
+      }
+    } else {
+      response = getCouponStatus(data.couponId);
+    }
 
     const statusValid = check(response, {
       'coupon status lookup succeeds': (res) => res.status === 200,
       'stock and issue history are consistent': (res) => {
         const body = parseJson(res);
         return body !== null && body.consistent === true;
+      },
+      'expected issue count is persisted': (res) => {
+        const body = parseJson(res);
+
+        if (body === null) {
+          return false;
+        }
+
+        return (
+          strategy !== 'KAFKA' ||
+          body.issueCount === Math.min(data.totalQuantity, iterations)
+        );
       },
       'remaining stock is not negative': (res) => {
         const body = parseJson(res);
@@ -138,10 +185,9 @@ export function createCouponIssueTest(strategy) {
           return false;
         }
 
-        const remainingQuantity =
-          strategy === 'REDIS'
-            ? body.redisRemainingQuantity
-            : body.dbRemainingQuantity;
+        const remainingQuantity = usesRedisStock()
+          ? body.redisRemainingQuantity
+          : body.dbRemainingQuantity;
 
         return (
           remainingQuantity !== null &&
@@ -155,6 +201,15 @@ export function createCouponIssueTest(strategy) {
     consistencyCheckRate.add(statusValid);
 
     console.log(`[${strategy}] final status: ${response.body}`);
+  }
+
+  function getCouponStatus(targetCouponId) {
+    return http.get(
+      `${baseUrl}/experiment/coupons/${targetCouponId}/status`,
+      {
+        tags: { name: 'coupon_status', strategy },
+      },
+    );
   }
 
   function handleSummary(data) {
@@ -179,6 +234,18 @@ export function createCouponIssueTest(strategy) {
     if (!Number.isInteger(userIdStart) || userIdStart <= 0) {
       fail('USER_ID_START must be a positive integer.');
     }
+    if (strategy === 'KAFKA') {
+      if (!Number.isFinite(kafkaWaitTimeout) || kafkaWaitTimeout <= 0) {
+        fail('KAFKA_WAIT_TIMEOUT must be a positive number.');
+      }
+      if (!Number.isFinite(kafkaPollInterval) || kafkaPollInterval <= 0) {
+        fail('KAFKA_POLL_INTERVAL must be a positive number.');
+      }
+    }
+  }
+
+  function usesRedisStock() {
+    return strategy === 'REDIS' || strategy === 'KAFKA';
   }
 
   function buildRequestId(sequence) {
@@ -195,7 +262,9 @@ export function createCouponIssueTest(strategy) {
   function classifyResponse(response) {
     if (response.status === 200) {
       const body = parseJson(response);
-      if (body !== null && body.result === 'SUCCESS') {
+      const expectedResult = strategy === 'KAFKA' ? 'WAITING' : 'SUCCESS';
+
+      if (body !== null && body.result === expectedResult) {
         issueSuccess.add(1);
         systemErrorRate.add(false);
       } else {
