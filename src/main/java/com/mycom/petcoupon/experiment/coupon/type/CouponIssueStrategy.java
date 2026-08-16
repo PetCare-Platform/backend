@@ -5,5 +5,6 @@ public enum CouponIssueStrategy {
     PESSIMISTIC,
     OPTIMISTIC,
     CONDITIONAL,
-    REDIS
+    REDIS,
+    KAFKA
 }
