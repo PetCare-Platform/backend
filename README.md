@@ -57,6 +57,7 @@
 - [OPTIMISTIC](docs/strategies/optimistic.md)
 - [CONDITIONAL](docs/strategies/conditional.md)
 - [REDIS](docs/strategies/redis.md)
+- [KAFKA](docs/strategies/kafka.md)
 
 ## 📊 Observability
 
