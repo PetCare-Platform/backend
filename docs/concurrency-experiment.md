@@ -10,8 +10,8 @@
 이 실험은 다음 세 단계로 진행합니다.
 
 1. `DIRECT`, `PESSIMISTIC`, `OPTIMISTIC`, `CONDITIONAL`, `REDIS`의 재고 차감 성능과 정합성을 비교합니다.
-2. `REDIS` 단독 처리와 `REDIS_KAFKA` 비동기 처리의 응답 성능 및 최종 정합성을 비교합니다.
-3. 최종 적용 후보인 `REDIS_KAFKA` 방식으로 재고 10,000개, 요청 20,000건 요구사항을 검증합니다.
+2. `REDIS` 단독 처리와 `KAFKA` 비동기 처리의 응답 성능 및 최종 정합성을 비교합니다.
+3. 최종 적용 후보인 `KAFKA` 방식으로 재고 10,000개, 요청 20,000건 요구사항을 검증합니다.
 
 각 실험에서는 다음 항목을 동일한 조건에서 비교합니다.
 
@@ -35,7 +35,7 @@
 | `OPTIMISTIC` | version 기반 CAS 방식 |
 | `CONDITIONAL` | 재고 조건을 포함한 원자적 UPDATE |
 | `REDIS` | Redis Lua 원자 연산으로 재고를 차감한 뒤 같은 요청에서 DB에 발급 이력을 저장 |
-| `REDIS_KAFKA` | Redis Lua 원자 연산으로 재고를 선점하고 Kafka Consumer가 DB 발급 이력을 비동기로 저장 |
+| `KAFKA` | Redis Lua 원자 연산으로 재고를 선점하고 Kafka Consumer가 DB 발급 이력을 비동기로 저장 |
 
 각 전략의 구현 원리와 세부 코드 구조는 별도 문서에서 다룹니다.
 
@@ -46,8 +46,10 @@
 - [OPTIMISTIC](./strategies/optimistic.md)
 - [CONDITIONAL](./strategies/conditional.md)
 - [REDIS](./strategies/redis.md)
+- [KAFKA](./strategies/kafka.md)
 
-현재 공통 전략 API와 k6 스크립트는 `REDIS`까지 구현되어 있습니다. `REDIS_KAFKA`는 구현 완료 후 같은 실험 규격에 연결합니다.
+현재 공통 전략 API는 KAFKA까지 구현되어 있습니다.
+k6 스크립트에서는 KAFKA의 WAITING 응답을 정상 접수로 집계하고, Consumer의 DB 저장 완료까지 polling한 후 최종 정합성을 검증합니다.
 
 ## 3. 비교 원칙
 
@@ -205,7 +207,7 @@ Reset API는 재고를 쿠폰의 기존 `total_quantity`로 복원할 뿐 총재
 
 ### 8.2 실험 B — Redis 처리 파이프라인 비교
 
-`REDIS`와 `REDIS_KAFKA`를 실험 A와 동일한 네 단계로 비교합니다. Redis 재고 선점 방식과 테스트 데이터는 동일하게 유지합니다.
+`REDIS`와 `KAFKA`를 실험 A와 동일한 네 단계로 비교합니다. Redis 재고 선점 방식과 테스트 데이터는 동일하게 유지합니다.
 
 | 단계 | 재고 | 요청 수 | VUS | 목적 |
 | --- | ---: | ---: | ---: | --- |
@@ -218,7 +220,7 @@ Reset API는 재고를 쿠폰의 기존 `total_quantity`로 복원할 뿐 총재
 
 | 대상 | 재고 | 요청 수 | VUS | 목적 |
 | --- | ---: | ---: | ---: | --- |
-| `REDIS_KAFKA` | 10,000 | 20,000 | 20,000 | 초과 발급 0건, 1인 1매, 최종 정합성 및 대규모 처리 성능 검증 |
+| `KAFKA` | 10,000 | 20,000 | 20,000 | 초과 발급 0건, 1인 1매, 최종 정합성 및 대규모 처리 성능 검증 |
 
 각 단계에서 `VUS`와 `ITERATIONS`를 전체 요청 수와 동일하게 설정하여, 각 VU가 한 번씩 요청을 보내도록 합니다. 최종 20,000 VUS 실행 전에는 부하 발생기의 CPU·메모리·네트워크를 확인하여 부하 발생기가 먼저 병목이 되지 않도록 합니다.
 
@@ -281,7 +283,7 @@ remaining_quantity >= 0
 동일한 request_id의 발급 이력은 최대 1건
 ```
 
-`REDIS`와 `REDIS_KAFKA`는 DB의 `coupon_stock.issued_quantity`, `remaining_quantity`를 재고 판정 기준으로 사용하지 않고 다음 조건을 확인합니다.
+`REDIS`와 `KAFKA`는 DB의 `coupon_stock.issued_quantity`, `remaining_quantity`를 재고 판정 기준으로 사용하지 않고 다음 조건을 확인합니다.
 
 ```text
 total_quantity - Redis 잔여 재고 == coupon_issue의 ISSUED 건수
@@ -293,7 +295,7 @@ Redis 잔여 재고 >= 0
 동일한 request_id의 발급 이력은 최대 1건
 ```
 
-`REDIS_KAFKA`는 HTTP 요청 종료 시점이 아니라 Kafka Consumer 처리가 완료된 시점에 최종 정합성을 판정합니다. Kafka 대기 메시지와 처리 중 메시지가 0이 되기 전에 DB 발급 이력만 조회하면 정상 처리 중인 요청을 불일치로 오판할 수 있습니다.
+`KAFKA`는 HTTP 요청 종료 시점이 아니라 Kafka Consumer 처리가 완료된 시점에 최종 정합성을 판정합니다. Kafka 대기 메시지와 처리 중 메시지가 0이 되기 전에 DB 발급 이력만 조회하면 정상 처리 중인 요청을 불일치로 오판할 수 있습니다.
 
 `DIRECT`는 동시성 제어가 없는 기준 전략이므로 정합성 통과를 강제하지 않고, 발생한 불일치 자체를 비교 결과로 기록합니다.
 
@@ -330,7 +332,7 @@ HTTP 상태코드만으로 결과를 판정하지 않습니다.
 
 `SOLD_OUT`, `DUPLICATE_REQUEST`, `DUPLICATE_USER`는 예상 가능한 비즈니스 응답이므로 시스템 오류와 분리해 집계합니다.
 
-`REDIS_KAFKA`의 HTTP 상태와 응답 코드는 구현 완료 후 API 명세 및 k6 스크립트에 동일하게 반영합니다. `WAITING`은 최종 발급 완료가 아니라 정상적으로 비동기 처리에 접수되었다는 뜻입니다.
+`KAFKA`의 HTTP 상태와 응답 코드는 구현 완료 후 API 명세 및 k6 스크립트에 동일하게 반영합니다. `WAITING`은 최종 발급 완료가 아니라 정상적으로 비동기 처리에 접수되었다는 뜻입니다.
 
 
 ## 11. 테스트 도구
@@ -357,15 +359,8 @@ STRATEGY=PESSIMISTIC
 STRATEGY=OPTIMISTIC
 STRATEGY=CONDITIONAL
 STRATEGY=REDIS
-STRATEGY=REDIS_KAFKA
+STRATEGY=KAFKA
 ```
-
-현재 스크립트는 실험 A의 다섯 전략을 실행할 수 있습니다. 실험 B를 실행하려면 `REDIS_KAFKA`용 실행 파일과 다음 처리가 추가되어야 합니다.
-
-- `WAITING`을 정상 접수 결과로 집계
-- Redis 재고 및 중복 방지 키 초기화
-- Kafka Consumer 처리 완료까지 상태를 폴링하거나 대기
-- 최종 DB 발급 이력, Redis 잔여 재고, Retry/DLQ를 조회하여 정합성 판정
 
 
 ## 12. 실험 실행 순서
@@ -386,7 +381,7 @@ STRATEGY=REDIS_KAFKA
 
 4. 모든 HTTP 요청 종료 확인
 
-5. REDIS_KAFKA는 Consumer 처리 완료 확인
+5. KAFKA는 Consumer 처리 완료 확인
    - 처리 대기/처리 중 메시지 0건
    - 또는 완료 건수 + 실패 건수 == 정상 접수 건수
 
@@ -412,7 +407,7 @@ STRATEGY=REDIS_KAFKA
 POST /experiment/coupons/{couponId}/reset
 ```
 
-Reset은 부하 요청이 모두 종료된 이후에만 수행합니다. `REDIS_KAFKA`는 HTTP 요청뿐 아니라 Kafka Consumer 처리까지 완료된 후 Reset합니다.
+Reset은 부하 요청이 모두 종료된 이후에만 수행합니다. `KAFKA`는 HTTP 요청뿐 아니라 Kafka Consumer 처리까지 완료된 후 Reset합니다.
 
 
 ## 13. 반복 실행
@@ -429,7 +424,7 @@ PESSIMISTIC  1차 / 2차 / 3차
 OPTIMISTIC   1차 / 2차 / 3차
 CONDITIONAL  1차 / 2차 / 3차
 REDIS        1차 / 2차 / 3차
-REDIS_KAFKA  1차 / 2차 / 3차
+KAFKA  1차 / 2차 / 3차
 ```
 
 필요한 경우 최초 실행은 JVM 및 DB 워밍업을 위한 실행으로 분리하고 실제 비교 결과에서 제외할 수 있습니다.
@@ -448,7 +443,7 @@ REDIS_KAFKA  1차 / 2차 / 3차
 | OPTIMISTIC |  |  |  |  |  |  |  |  |  |  |
 | CONDITIONAL |  |  |  |  |  |  |  |  |  |  |
 | REDIS |  |  |  |  |  |  |  |  |  |  |
-| REDIS_KAFKA |  |  |  |  |  |  |  |  |  |  |
+| KAFKA |  |  |  |  |  |  |  |  |  |  |
 
 실제 수치와 결과 분석은 `experiment-results.md`에서 관리합니다.
 
@@ -481,7 +476,7 @@ Kafka의 Retry/DLQ와 실패 복구는 Redis/Kafka 파이프라인의 최종 정
 
 부하 요청이 처리 중인 상태에서 Reset API를 실행하면 실험 결과가 오염될 수 있습니다.
 
-`REDIS_KAFKA`에서는 k6의 HTTP 요청이 모두 끝났더라도 Consumer가 처리 중일 수 있으므로 Kafka 처리가 완료되기 전에는 Reset하지 않습니다.
+`KAFKA`에서는 k6의 HTTP 요청이 모두 끝났더라도 Consumer가 처리 중일 수 있으므로 Kafka 처리가 완료되기 전에는 Reset하지 않습니다.
 
 ### 전략 간 데이터 공유 금지
 
@@ -533,7 +528,7 @@ DB에 존재하지 않는 `userId`를 사용하면 FK 오류가 발생할 수 �
 - 테스트 반복 횟수
 - 워밍업 수행 여부
 - 테스트 실행 순서
-- `REDIS_KAFKA` API 경로와 정상 접수 HTTP 상태/응답 코드
+- `KAFKA` API 경로와 정상 접수 HTTP 상태/응답 코드
 - Kafka Consumer 완료 확인 API 또는 폴링 기준
 - Kafka 파티션 수와 Consumer 동시성
 - Retry/DLQ 처리 및 집계 방식
