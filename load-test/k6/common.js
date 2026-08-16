@@ -9,6 +9,8 @@ export function createCouponIssueTest(strategy) {
   const vus = Number(__ENV.VUS || 20);
   const iterations = Number(__ENV.ITERATIONS || 20);
   const userIdStart = Number(__ENV.USER_ID_START || 1);
+  const kafkaWaitTimeout = Number(__ENV.KAFKA_WAIT_TIMEOUT || 30);
+  const kafkaPollInterval = Number(__ENV.KAFKA_POLL_INTERVAL || 1);
   // k6의 init 코드는 VU마다 실행되므로 Date.now()를 기본값으로 사용하지 않는다.
   const runId = __ENV.RUN_ID || 'local-run';
   const resultFile =
@@ -54,6 +56,9 @@ export function createCouponIssueTest(strategy) {
       'http_req_failed{name:coupon_issue}': ['rate<0.01'],
     },
     summaryTrendStats: ['avg', 'min', 'med', 'p(90)', 'p(95)', 'p(99)', 'max'],
+    // KAFKA는 teardown에서 Consumer의 DB 저장 완료까지 폴링하므로 k6 기본값 60초로는 부족하다.
+    // KAFKA_WAIT_TIMEOUT보다 항상 크도록 여기서 함께 계산한다.
+    teardownTimeout: `${kafkaWaitTimeout + 60}s`,
   };
 
   function setup() {
@@ -130,11 +135,13 @@ export function createCouponIssueTest(strategy) {
     let response;
 
     if (strategy === 'KAFKA') {
-      const waitTimeout = Number(__ENV.KAFKA_WAIT_TIMEOUT || 30);
-      const pollInterval = Number(__ENV.KAFKA_POLL_INTERVAL || 1);
       const expectedIssueCount = Math.min(data.totalQuantity, iterations);
 
-      for (let elapsed = 0; elapsed < waitTimeout; elapsed += pollInterval) {
+      for (
+        let elapsed = 0;
+        elapsed < kafkaWaitTimeout;
+        elapsed += kafkaPollInterval
+      ) {
         response = getCouponStatus(data.couponId);
         const body = parseJson(response);
 
@@ -147,7 +154,7 @@ export function createCouponIssueTest(strategy) {
           break;
         }
 
-        sleep(pollInterval);
+        sleep(kafkaPollInterval);
       }
     } else {
       response = getCouponStatus(data.couponId);
@@ -228,13 +235,10 @@ export function createCouponIssueTest(strategy) {
       fail('USER_ID_START must be a positive integer.');
     }
     if (strategy === 'KAFKA') {
-      const waitTimeout = Number(__ENV.KAFKA_WAIT_TIMEOUT || 30);
-      const pollInterval = Number(__ENV.KAFKA_POLL_INTERVAL || 1);
-
-      if (!Number.isFinite(waitTimeout) || waitTimeout <= 0) {
+      if (!Number.isFinite(kafkaWaitTimeout) || kafkaWaitTimeout <= 0) {
         fail('KAFKA_WAIT_TIMEOUT must be a positive number.');
       }
-      if (!Number.isFinite(pollInterval) || pollInterval <= 0) {
+      if (!Number.isFinite(kafkaPollInterval) || kafkaPollInterval <= 0) {
         fail('KAFKA_POLL_INTERVAL must be a positive number.');
       }
     }
