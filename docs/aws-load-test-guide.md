@@ -132,39 +132,68 @@ aws ec2 describe-security-groups --group-ids <APP_SG_ID> --query "SecurityGroups
 
 앱 서버에 SSH로 접속한 뒤 실행한다. 접속 방법은 4.3을 참고한다.
 
+**먼저 무엇이 설치돼 있는지 확인한다.** 이미 Docker가 있는 인스턴스에 우분투 패키지(`docker.io`)를 덮어 설치하면 `containerd.io : Conflicts: containerd` 오류로 실패한다.
+
 ```bash
-sudo apt update
-sudo apt install -y openjdk-21-jdk docker.io docker-compose-v2
+echo "--- docker ---"; docker --version 2>/dev/null || echo "없음"; echo "--- compose ---"; docker compose version 2>/dev/null || echo "없음"; echo "--- java ---"; java -version 2>&1 | head -1
 ```
+
+결과에 따라 필요한 것만 설치한다.
+
+| 확인 결과 | 설치 명령 |
+|---|---|
+| Docker · Compose 있음, Java 없음 | `sudo apt install -y openjdk-21-jdk` |
+| Docker 있음, Compose 없음 | `sudo apt install -y openjdk-21-jdk docker-compose-plugin` |
+| 셋 다 없음 | [Docker 공식 문서](https://docs.docker.com/engine/install/ubuntu/)의 apt 저장소 방식으로 Docker 설치 후 `sudo apt install -y openjdk-21-jdk` |
+
+> Docker가 이미 있다면 **절대 `docker.io`를 설치하지 않는다.** 공식 저장소 패키지(`docker-ce`)와 충돌한다.
+
+설치 후 현재 사용자를 docker 그룹에 넣는다.
+
+```bash
+groups
+```
+
+출력에 `docker`가 없을 때만 실행한다.
 
 ```bash
 sudo usermod -aG docker ubuntu
 ```
 
-그룹 변경을 적용하려면 **SSH 세션을 끊고 다시 접속한다.**
+그룹 변경을 적용하려면 **SSH 세션을 끊고(`exit`) 다시 접속한다.**
 
 **확인**
 
 ```bash
-java -version && docker --version && docker compose version
+java -version && docker --version && docker compose version && docker ps
 ```
 
-`openjdk version "21..."`, `Docker version ...`, `Docker Compose version v2...` 가 모두 나와야 한다.
+`docker ps`가 `permission denied` 없이 빈 목록을 보여주면 그룹 설정까지 끝난 것이다.
 
 ### 2.4 k6 서버 소프트웨어 설치
 
-k6 인스턴스에 SSH로 접속한 뒤 실행한다.
+k6 인스턴스에 SSH로 접속한 뒤 실행한다. k6 서버에는 **k6만 있으면 된다.** Java와 Docker는 필요 없다.
+
+k6는 의존성 없는 단일 실행 파일이므로 GitHub 릴리스에서 바이너리를 받아 설치한다.
+
+> apt 저장소(`dl.k6.io/deb`) 방식은 권장하지 않는다. 최소 설치 이미지에는 `/root/.gnupg`가 없어 gpg 키 등록이 실패하고, 등록에 성공해도 최신 gpg가 만드는 keybox 형식을 apt가 읽지 못한다. 게다가 k6가 서명 키를 교체하면 문서에 적힌 키 ID가 맞지 않게 된다. 실제로 이 세 가지가 순차적으로 발생했다.
 
 ```bash
-sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+K6_VER=$(curl -s https://api.github.com/repos/grafana/k6/releases/latest | grep -oP '"tag_name": "\K[^"]+')
 ```
 
 ```bash
-echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+echo "받을 버전: $K6_VER"
+```
+
+버전이 비어 있으면 [릴리스 페이지](https://github.com/grafana/k6/releases)에서 확인해 `K6_VER=v2.2.0` 처럼 직접 지정한다.
+
+```bash
+curl -fsSL "https://github.com/grafana/k6/releases/download/${K6_VER}/k6-${K6_VER}-linux-amd64.tar.gz" -o /tmp/k6.tar.gz
 ```
 
 ```bash
-sudo apt update && sudo apt install -y k6
+tar -xzf /tmp/k6.tar.gz -C /tmp && sudo mv /tmp/k6-${K6_VER}-linux-amd64/k6 /usr/local/bin/k6 && sudo chmod +x /usr/local/bin/k6
 ```
 
 **확인**
@@ -172,6 +201,8 @@ sudo apt update && sudo apt install -y k6
 ```bash
 k6 version
 ```
+
+> **노트북과 k6 서버의 k6 버전을 맞춘다.** 버전이 다르면 측정 조건이 달라진다. 노트북에서 `k6 version`으로 확인해 같은 버전을 설치한다.
 
 ### 2.5 k6 서버 커널 파라미터 조정
 
@@ -476,8 +507,10 @@ cd ~/backend
 실행 명령 형식이다. 전략 파일과 `COUPON_ID`, `VUS`, `ITERATIONS`, `RUN_ID`를 단계에 맞게 바꾼다.
 
 ```bash
-k6 run -e BASE_URL=http://<APP_PRIVATE_IP>:8080 -e COUPON_ID=<쿠폰번호> -e VUS=200 -e ITERATIONS=200 -e RUN_ID=aws-basic-1 load-test/k6/direct.js
+k6 run -e BASE_URL=http://<APP_PRIVATE_IP>:8080 -e COUPON_ID=<쿠폰번호> -e VUS=200 -e ITERATIONS=200 -e RUN_ID=aws-basic-1 load-test/k6/direct.js 2>&1 | tee load-test/results/direct-aws-basic-1.log
 ```
+
+**`| tee ...log` 부분을 빠뜨리지 않는다.** k6가 콘솔에 출력하는 `final status` 줄에 `issueCount`와 잔여재고가 들어 있는데, 이 값은 결과 JSON에 저장되지 않는다. 로그를 남겨야 10장의 집계 스크립트가 표를 완성할 수 있다. 로그 파일명은 결과 JSON과 같은 이름(`{전략}-{RUN_ID}.log`)으로 맞춘다.
 
 전략 파일은 `direct.js`, `pessimistic.js`, `optimistic.js`, `conditional.js`, `redis.js` 다섯 개다.
 
@@ -635,16 +668,32 @@ scp -i petcoupon-test-key.pem -r ubuntu@<k6서버-퍼블릭IP>:~/backend/load-te
 Get-ChildItem load-test\results\ | Select-Object Name, Length
 ```
 
-### 10.2 문서 기록 순서
+### 10.2 집계 스크립트로 표 생성
+
+결과 JSON에서 수치를 손으로 옮겨 적으면 회차당 12개씩 수백 개를 다루게 되어 오타가 난다. 집계 스크립트가 마크다운 표를 만들어 준다.
+
+**노트북 PowerShell**, 저장소 루트에서:
+
+```powershell
+node load-test/summarize-results.js load-test/results --env aws
+```
+
+단계별 표와 3회 평균 행이 그대로 출력된다. 복사해서 `experiment-results.md`의 해당 단계에 붙인다.
+
+출력 끝의 **확인이 필요한 항목**을 반드시 읽는다. threshold 실패, 예상하지 못한 응답, 로그 누락을 짚어 준다.
+
+> `DIRECT`의 정합성 열은 스크립트가 자동으로 `관찰`로 채운다. 기준 전략이라 통과를 강제하지 않기 때문이다. (설계 문서 §9.2)
+
+### 10.3 문서 기록 순서
 
 한 단계가 끝날 때마다 기록한다. 전부 끝내고 몰아서 하면 어느 수치가 어느 실행인지 헷갈린다.
 
-1. `experiment-results.md`의 해당 단계 표에 3회 수치를 채운다
-2. 평균 행을 계산해 넣는다
-3. 정합성 상세 표를 채운다
-4. 관찰 내용에 특이사항을 적는다
+1. 집계 스크립트를 돌려 해당 단계 표를 생성해 붙인다
+2. 정합성 상세 표를 채운다 (스크립트가 다루지 않는 항목이다)
+3. 관찰 내용에 특이사항을 적는다
+4. 쿠폰 매핑표에 실제 `couponId`가 기록돼 있는지 확인한다
 
-### 10.3 커밋 단위
+### 10.4 커밋 단위
 
 단계별로 묶어 커밋한다.
 
