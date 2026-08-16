@@ -1,4 +1,4 @@
-# 🎟️ Coupon Concurrency Experiment
+# 🎁 Coupon Concurrency Experiment
 
 선착순 쿠폰 발급 과정에서 발생하는 동시성 문제를 확인하고,
 여러 동시성 제어 방식을 동일한 조건에서 비교하기 위한 실험 모듈입니다.
@@ -16,7 +16,7 @@
 - [프로젝트 멘토링 질문](docs/mentoring-questions.md)
 
 
-## 🧰 Tech Stack
+## 🛠 Tech Stack
 
 ### Application
 
