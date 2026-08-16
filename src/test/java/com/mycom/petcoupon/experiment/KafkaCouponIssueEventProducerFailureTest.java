@@ -1,6 +1,7 @@
 package com.mycom.petcoupon.experiment;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -9,6 +10,7 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
 
+import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.errors.TimeoutException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -127,6 +129,33 @@ class KafkaCouponIssueEventProducerFailureTest {
         assertThat(response.result()).isEqualTo(CouponIssueResult.WAITING);
 
         // 실패한 Future에 대한 whenComplete 콜백은 동기적으로 실행되므로 별도 대기 없이 바로 검증 가능
+        assertThat(stockService.getRemainingStock(couponId)).isEqualTo(3);
+
+        assertThat(
+                redisTemplate.hasKey(stockService.getRequestKey(couponId, requestId))
+        ).isFalse();
+
+        assertThat(
+                redisTemplate.hasKey(stockService.getUserKey(couponId, userId))
+        ).isFalse();
+
+        assertThat(couponIssueRepository.countByCoupon_Id(couponId)).isZero();
+    }
+
+    @Test
+    void send_호출_자체가_동기_예외를_던지면_Redis_재고와_중복방지_키가_복구되고_호출자에게_예외가_전달된다() {
+
+        String requestId = "producer-sync-fail-request";
+
+        // Future를 반환하기도 전에 send() 호출 자체가 예외를 던지는 상황을 재현
+        // (예: 메타데이터 조회 타임아웃, 직렬화 실패 등 KafkaProducer.send()가 동기적으로 던지는 케이스)
+        when(couponIssueEventKafkaTemplate.send(eq(KafkaTopics.COUPON_ISSUE_EVENT), anyString(), any(CouponIssueEvent.class)))
+                .thenThrow(new KafkaException("브로커에 연결할 수 없음"));
+
+        assertThatThrownBy(() ->
+                kafkaCouponIssueService.issue(couponId, new CouponIssueRequest(userId, requestId))
+        ).isInstanceOf(KafkaException.class);
+
         assertThat(stockService.getRemainingStock(couponId)).isEqualTo(3);
 
         assertThat(
