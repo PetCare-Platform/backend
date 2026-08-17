@@ -1,0 +1,353 @@
+{
+  "root_group": {
+    "name": "",
+    "path": "",
+    "id": "d41d8cd98f00b204e9800998ecf8427e",
+    "groups": [
+      {
+        "name": "setup",
+        "path": "::setup",
+        "id": "5c0f8025f7e0b6654089e5b00e950f1a",
+        "groups": [],
+        "checks": [
+            {
+              "name": "coupon reset succeeds",
+              "path": "::setup::coupon reset succeeds",
+              "id": "1e6732337c930db80f21ca4d5680c059",
+              "passes": 1,
+              "fails": 0
+            },
+            {
+              "name": "Redis stock initialization succeeds",
+              "path": "::setup::Redis stock initialization succeeds",
+              "id": "82d0d9d6e982ebb5e20e12c817156c67",
+              "passes": 1,
+              "fails": 0
+            }
+          ]
+      },
+      {
+        "path": "::teardown",
+        "id": "a8a9942382e8ffe2e56ef29e664b8229",
+        "groups": [],
+        "checks": [
+            {
+              "fails": 0,
+              "name": "coupon status lookup succeeds",
+              "path": "::teardown::coupon status lookup succeeds",
+              "id": "3fa6ab5f98e535a06a2049887f242d83",
+              "passes": 1
+            },
+            {
+              "name": "stock and issue history are consistent",
+              "path": "::teardown::stock and issue history are consistent",
+              "id": "54cf2fa3b8230cac064420f72d028649",
+              "passes": 1,
+              "fails": 0
+            },
+            {
+              "path": "::teardown::expected issue count is persisted",
+              "id": "7b48eca1a2b7515b3c37a619a062b88e",
+              "passes": 1,
+              "fails": 0,
+              "name": "expected issue count is persisted"
+            },
+            {
+              "id": "f967cd9da12fdbfd3e86c33582919cd8",
+              "passes": 1,
+              "fails": 0,
+              "name": "remaining stock is not negative",
+              "path": "::teardown::remaining stock is not negative"
+            }
+          ],
+        "name": "teardown"
+      }
+    ],
+    "checks": []
+  },
+  "options": {
+    "summaryTrendStats": [
+      "avg",
+      "min",
+      "med",
+      "p(90)",
+      "p(95)",
+      "p(99)",
+      "max"
+    ],
+    "summaryTimeUnit": "",
+    "noColor": false
+  },
+  "state": {
+    "isStdOutTTY": false,
+    "isStdErrTTY": false,
+    "testRunDurationMs": 1268.084951
+  },
+  "metrics": {
+    "http_req_connecting": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "med": 40.429635,
+        "p(90)": 56.984489800000006,
+        "p(95)": 60.0045452,
+        "p(99)": 68.89340184,
+        "max": 73.973761,
+        "avg": 38.20454172881354,
+        "min": 0
+      }
+    },
+    "data_received": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "count": 202322,
+        "rate": 159549.2477380563
+      }
+    },
+    "redis_issue_success": {
+      "contains": "default",
+      "values": {
+        "count": 500,
+        "rate": 394.2953503278346
+      },
+      "type": "counter"
+    },
+    "http_req_duration{name:coupon_issue}": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(99)": 1027.8190975999998,
+        "max": 1045.694696,
+        "avg": 667.8651978280001,
+        "min": 25.557255,
+        "med": 735.0231745,
+        "p(90)": 893.9976923,
+        "p(95)": 968.5991492499999
+      },
+      "thresholds": {
+        "p(95)<3000": {
+          "ok": true
+        }
+      }
+    },
+    "redis_consistency_check_rate": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 1,
+        "fails": 0
+      },
+      "thresholds": {
+        "rate==1": {
+          "ok": true
+        }
+      }
+    },
+    "redis_system_error_rate": {
+      "thresholds": {
+        "rate==0": {
+          "ok": true
+        }
+      },
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 0,
+        "passes": 0,
+        "fails": 1000
+      }
+    },
+    "http_req_duration{expected_response:true}": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "min": 4.331132,
+        "med": 734.039104,
+        "p(90)": 893.8292576000001,
+        "p(95)": 968.4157895,
+        "p(99)": 1027.73758778,
+        "max": 1045.694696,
+        "avg": 666.0188288614158
+      }
+    },
+    "vus_max": {
+      "type": "gauge",
+      "contains": "default",
+      "values": {
+        "value": 1000,
+        "min": 1000,
+        "max": 1000
+      }
+    },
+    "http_req_sending": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 17.3973747,
+        "p(99)": 17.72463634,
+        "max": 29.490613,
+        "avg": 5.1984006789631065,
+        "min": 0.014096,
+        "med": 2.488933,
+        "p(90)": 15.280728400000001
+      }
+    },
+    "iterations": {
+      "values": {
+        "count": 1000,
+        "rate": 788.5907006556693
+      },
+      "type": "counter",
+      "contains": "default"
+    },
+    "http_req_blocked": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 38.75715267996007,
+        "min": 0.00408,
+        "med": 41.472408,
+        "p(90)": 57.537893600000004,
+        "p(95)": 60.5924433,
+        "p(99)": 72.80819186000001,
+        "max": 82.169814
+      }
+    },
+    "iteration_duration": {
+      "contains": "time",
+      "values": {
+        "p(90)": 933.4813899,
+        "p(95)": 1013.148891,
+        "p(99)": 1071.85032665,
+        "max": 1099.804585,
+        "avg": 706.8554912579998,
+        "min": 79.594248,
+        "med": 765.45863
+      },
+      "type": "trend"
+    },
+    "http_req_duration": {
+      "values": {
+        "p(99)": 1027.73758778,
+        "max": 1045.694696,
+        "avg": 666.0188288614158,
+        "min": 4.331132,
+        "med": 734.039104,
+        "p(90)": 893.8292576000001,
+        "p(95)": 968.4157895
+      },
+      "type": "trend",
+      "contains": "time"
+    },
+    "checks": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 6,
+        "fails": 0
+      }
+    },
+    "http_reqs": {
+      "contains": "default",
+      "values": {
+        "rate": 790.9564727576362,
+        "count": 1003
+      },
+      "type": "counter"
+    },
+    "redis_issue_sold_out": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 500,
+        "rate": 394.2953503278346
+      }
+    },
+    "http_req_receiving": {
+      "values": {
+        "p(95)": 0.4870739999999999,
+        "p(99)": 1.6871440400000002,
+        "max": 20.004621,
+        "avg": 0.15264759022931218,
+        "min": 0.01511,
+        "med": 0.03713,
+        "p(90)": 0.27458520000000003
+      },
+      "type": "trend",
+      "contains": "time"
+    },
+    "http_req_tls_handshaking": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 0,
+        "p(99)": 0,
+        "max": 0,
+        "avg": 0,
+        "min": 0,
+        "med": 0,
+        "p(90)": 0
+      }
+    },
+    "vus": {
+      "type": "gauge",
+      "contains": "default",
+      "values": {
+        "value": 788,
+        "min": 788,
+        "max": 788
+      }
+    },
+    "http_req_failed{name:coupon_issue}": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 0,
+        "passes": 0,
+        "fails": 1000
+      },
+      "thresholds": {
+        "rate<0.01": {
+          "ok": true
+        }
+      }
+    },
+    "data_sent": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "count": 218129,
+        "rate": 172014.50094332045
+      }
+    },
+    "http_req_failed": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 0,
+        "passes": 0,
+        "fails": 1003
+      }
+    },
+    "http_req_waiting": {
+      "contains": "time",
+      "values": {
+        "avg": 660.6677805922229,
+        "min": 4.265897,
+        "med": 728.022007,
+        "p(90)": 887.3237304,
+        "p(95)": 965.2752346999999,
+        "p(99)": 1020.28108562,
+        "max": 1030.18738
+      },
+      "type": "trend"
+    }
+  },
+  "setup_data": {
+    "couponId": "16",
+    "totalQuantity": 500
+  }
+}

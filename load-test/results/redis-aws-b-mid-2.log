@@ -1,0 +1,25 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: load-test/k6/redis.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 1000 max VUs, 5m30s max duration (incl. graceful stop):
+              * couponIssue: 1000 iterations shared among 1000 VUs (maxDuration: 5m0s, gracefulStop: 30s)
+
+
+running (0m00.7s), 0788/1000 VUs, 212 complete and 0 interrupted iterations
+couponIssue   [  21% ] 1000 VUs  0m00.6s/5m0s  0212/1000 shared iters
+time="2026-08-17T08:05:58Z" level=info msg="[REDIS] final status: {\"couponId\":16,\"totalQuantity\":500,\"dbRemainingQuantity\":500,\"redisRemainingQuantity\":0,\"issueCount\":500,\"consistent\":true}" source=console
+
+REDIS load test completed.
+Result file: load-test/results/redis-aws-b-mid-2.json
+
+running (0m01.3s), 0000/1000 VUs, 1000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 1000 VUs  0m01.1s/5m0s  1000/1000 shared iters
