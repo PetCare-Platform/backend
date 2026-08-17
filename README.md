@@ -12,6 +12,7 @@
 
 - [동시성 실험 설계](docs/concurrency-experiment.md)
 - [실험 공통 코드 구조](docs/common-code.md)
+- [AWS 부하테스트 실행 절차](docs/aws-load-test-guide.md)
 - [동시성 실험 결과](docs/experiment-results.md)
 - [프로젝트 멘토링 질문](docs/mentoring-questions.md)
 
