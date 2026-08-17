@@ -1,0 +1,25 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: load-test/k6/conditional.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 200 max VUs, 2m30s max duration (incl. graceful stop):
+              * couponIssue: 200 iterations shared among 200 VUs (maxDuration: 2m0s, gracefulStop: 30s)
+
+
+running (0m00.9s), 044/200 VUs, 156 complete and 0 interrupted iterations
+couponIssue   [  78% ] 200 VUs  0m00.9s/2m0s  156/200 shared iters
+time="2026-08-17T06:18:59Z" level=info msg="[CONDITIONAL] final status: {\"couponId\":4,\"totalQuantity\":100,\"dbRemainingQuantity\":0,\"redisRemainingQuantity\":null,\"issueCount\":100,\"consistent\":true}" source=console
+
+CONDITIONAL load test completed.
+Result file: load-test/results/conditional-aws-basic-2.json
+
+running (0m01.1s), 000/200 VUs, 200 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 200 VUs  0m01.1s/2m0s  200/200 shared iters

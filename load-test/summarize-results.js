@@ -124,6 +124,18 @@ function extractMetrics(data, strategy) {
     return metric.thresholds[expr].ok === true;
   };
 
+  // 응답시간 threshold는 표현식이 바뀔 수 있으므로 이름 대신 첫 항목을 본다.
+  const firstThresholdOk = (name) => {
+    const metric = m[name];
+    if (!metric || !metric.thresholds) return null;
+    const keys = Object.keys(metric.thresholds);
+    if (keys.length === 0) return null;
+    return {
+      expr: keys[0],
+      ok: metric.thresholds[keys[0]].ok === true,
+    };
+  };
+
   return {
     success: counter(`${p}_issue_success`),
     soldOut: counter(`${p}_issue_sold_out`),
@@ -140,33 +152,51 @@ function extractMetrics(data, strategy) {
     p99: dv['p(99)'] ?? null,
     errorOk: thresholdOk(`${p}_system_error_rate`, 'rate==0'),
     consistencyOk: thresholdOk(`${p}_consistency_check_rate`, 'rate==1'),
+    durationThreshold: firstThresholdOk('http_req_duration{name:coupon_issue}'),
+    failedThreshold: firstThresholdOk('http_req_failed{name:coupon_issue}'),
     couponId: data.setup_data ? data.setup_data.couponId : null,
   };
 }
 
 // k6 stdout 로그에 남는 `final status: {...}` 줄에서 최종 상태를 읽는다.
+// k6가 console.log를 msg="..." 안에 넣으면서 따옴표를 이스케이프하므로 되돌려서 파싱한다.
 function readFinalStatus(dir, base, strategy) {
+  const empty = {
+    issueCount: null,
+    remaining: null,
+    consistent: null,
+    logStatus: 'missing',
+  };
+
   const logPath = path.join(dir, `${base}.log`);
-  if (!fs.existsSync(logPath)) {
-    return { issueCount: null, remaining: null, consistent: null };
-  }
+  if (!fs.existsSync(logPath)) return empty;
 
   const log = fs.readFileSync(logPath, 'utf8');
   const match = log.match(/final status:\s*(\{.*?\})/s);
-  if (!match) return { issueCount: null, remaining: null, consistent: null };
+  if (!match) return { ...empty, logStatus: 'no-status-line' };
 
-  try {
-    const status = JSON.parse(match[1]);
-    return {
-      issueCount: status.issueCount ?? null,
-      remaining: REDIS_STOCK_STRATEGIES.has(strategy.toLowerCase())
-        ? status.redisRemainingQuantity ?? null
-        : status.dbRemainingQuantity ?? null,
-      consistent: status.consistent ?? null,
-    };
-  } catch {
-    return { issueCount: null, remaining: null, consistent: null };
+  const status = parseStatus(match[1]);
+  if (status === null) return { ...empty, logStatus: 'parse-failed' };
+
+  return {
+    issueCount: status.issueCount ?? null,
+    remaining: REDIS_STOCK_STRATEGIES.has(strategy.toLowerCase())
+      ? status.redisRemainingQuantity ?? null
+      : status.dbRemainingQuantity ?? null,
+    consistent: status.consistent ?? null,
+    logStatus: 'ok',
+  };
+}
+
+function parseStatus(raw) {
+  for (const candidate of [raw, raw.replace(/\\"/g, '"')]) {
+    try {
+      return JSON.parse(candidate);
+    } catch {
+      // 다음 후보로 넘어간다
+    }
   }
+  return null;
 }
 
 function printStageTable(runs) {
@@ -259,9 +289,23 @@ function printWarnings(runs) {
     if (r.unexpected > 0) {
       lines.push(`- ${r.filename}: 예상하지 못한 응답 ${r.unexpected}건`);
     }
-    if (r.issueCount === null) {
+    if (r.durationThreshold && !r.durationThreshold.ok) {
       lines.push(
-        `- ${r.filename}: 로그 파일이 없어 issueCount·잔여재고를 채우지 못했습니다`,
+        `- ${r.filename}: 응답시간 threshold 초과 (${r.durationThreshold.expr}, p95 ${num(r.p95, 2)}ms)`,
+      );
+    }
+    if (r.failedThreshold && !r.failedThreshold.ok) {
+      lines.push(
+        `- ${r.filename}: HTTP 실패율 threshold 초과 (${r.failedThreshold.expr})`,
+      );
+    }
+    if (r.logStatus === 'missing') {
+      lines.push(
+        `- ${r.filename}: 로그 파일이 없습니다. 실행 시 \`| tee ...log\`를 빠뜨렸는지 확인하세요`,
+      );
+    } else if (r.logStatus !== 'ok') {
+      lines.push(
+        `- ${r.filename}: 로그에서 final status를 읽지 못했습니다 (${r.logStatus})`,
       );
     }
   }
