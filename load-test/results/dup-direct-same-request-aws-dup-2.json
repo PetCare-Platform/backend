@@ -1,0 +1,299 @@
+{
+  "state": {
+    "testRunDurationMs": 37.38331,
+    "isStdOutTTY": false,
+    "isStdErrTTY": false
+  },
+  "metrics": {
+    "http_req_sending": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "min": 0.032122,
+        "med": 0.09345,
+        "p(90)": 0.27139130000000006,
+        "p(95)": 0.3469193499999999,
+        "p(99)": 0.41334307000000015,
+        "max": 0.429949,
+        "avg": 0.13391883333333332
+      }
+    },
+    "http_req_waiting": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 20.49114805,
+        "p(99)": 20.545439209999998,
+        "max": 20.559012,
+        "avg": 17.195248,
+        "min": 2.515626,
+        "med": 19.7368685,
+        "p(90)": 20.4073444
+      }
+    },
+    "http_req_duration{expected_response:true}": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(90)": 20.8265809,
+        "p(95)": 20.9256186,
+        "p(99)": 20.98456452,
+        "max": 20.999301,
+        "avg": 17.418197666666668,
+        "min": 2.578052,
+        "med": 19.878526
+      }
+    },
+    "http_req_tls_handshaking": {
+      "contains": "time",
+      "values": {
+        "p(95)": 0,
+        "p(99)": 0,
+        "max": 0,
+        "avg": 0,
+        "min": 0,
+        "med": 0,
+        "p(90)": 0
+      },
+      "type": "trend"
+    },
+    "http_req_blocked": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 0.46679216666666673,
+        "min": 0.213028,
+        "med": 0.445774,
+        "p(90)": 0.7205068000000001,
+        "p(95)": 0.7562636,
+        "p(99)": 0.7825791200000001,
+        "max": 0.789158
+      }
+    },
+    "iteration_duration": {
+      "contains": "time",
+      "values": {
+        "max": 21.974486,
+        "avg": 20.5210042,
+        "min": 16.129528,
+        "med": 20.6994135,
+        "p(90)": 21.944190199999998,
+        "p(95)": 21.9593381,
+        "p(99)": 21.97145642
+      },
+      "type": "trend"
+    },
+    "dup_single_issue_rate": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "passes": 1,
+        "fails": 0,
+        "rate": 1
+      },
+      "thresholds": {
+        "rate==1": {
+          "ok": true
+        }
+      }
+    },
+    "checks": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 4,
+        "fails": 0
+      }
+    },
+    "dup_system_error_rate": {
+      "values": {
+        "fails": 10,
+        "rate": 0,
+        "passes": 0
+      },
+      "thresholds": {
+        "rate==0": {
+          "ok": true
+        }
+      },
+      "type": "rate",
+      "contains": "default"
+    },
+    "http_req_receiving": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "med": 0.0478805,
+        "p(90)": 0.23233030000000005,
+        "p(95)": 0.2563099,
+        "p(99)": 0.26904438,
+        "max": 0.272228,
+        "avg": 0.08903083333333334,
+        "min": 0.021704
+      }
+    },
+    "http_req_failed": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 0,
+        "passes": 0,
+        "fails": 12
+      }
+    },
+    "data_sent": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "rate": 68774.00636808244,
+        "count": 2571
+      }
+    },
+    "http_req_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(99)": 20.98456452,
+        "max": 20.999301,
+        "avg": 17.418197666666668,
+        "min": 2.578052,
+        "med": 19.878526,
+        "p(90)": 20.8265809,
+        "p(95)": 20.9256186
+      }
+    },
+    "http_reqs": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 12,
+        "rate": 320.99886286152827
+      }
+    },
+    "http_req_connecting": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 0.35949824999999996,
+        "min": 0.151997,
+        "med": 0.29861099999999996,
+        "p(90)": 0.6857626000000001,
+        "p(95)": 0.70682855,
+        "p(99)": 0.71191451,
+        "max": 0.713186
+      }
+    },
+    "dup_issue_success": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 1,
+        "rate": 26.74990523846069
+      }
+    },
+    "data_received": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "count": 2691,
+        "rate": 71983.99499669771
+      }
+    },
+    "dup_duplicate_user": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 9,
+        "rate": 240.7491471461462
+      }
+    },
+    "iterations": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 10,
+        "rate": 267.4990523846069
+      }
+    },
+    "http_req_duration{name:coupon_issue}": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "min": 15.136131,
+        "med": 20.034421000000002,
+        "p(90)": 20.8787298,
+        "p(95)": 20.9390154,
+        "p(99)": 20.987243879999998,
+        "max": 20.999301,
+        "avg": 19.6474514
+      },
+      "thresholds": {
+        "p(95)<3000": {
+          "ok": true
+        }
+      }
+    }
+  },
+  "setup_data": {
+    "couponId": "27",
+    "totalQuantity": 100
+  },
+  "root_group": {
+    "name": "",
+    "path": "",
+    "id": "d41d8cd98f00b204e9800998ecf8427e",
+    "groups": [
+      {
+        "name": "teardown",
+        "path": "::teardown",
+        "id": "a8a9942382e8ffe2e56ef29e664b8229",
+        "groups": [],
+        "checks": [
+            {
+              "id": "3fa6ab5f98e535a06a2049887f242d83",
+              "passes": 1,
+              "fails": 0,
+              "name": "coupon status lookup succeeds",
+              "path": "::teardown::coupon status lookup succeeds"
+            },
+            {
+              "name": "exactly one issue is persisted",
+              "path": "::teardown::exactly one issue is persisted",
+              "id": "a44588610cb2022a602f869bdf0b8664",
+              "passes": 1,
+              "fails": 0
+            },
+            {
+              "passes": 1,
+              "fails": 0,
+              "name": "stock is consistent",
+              "path": "::teardown::stock is consistent",
+              "id": "e47c4dad1a19fd0d9d7573227c047bed"
+            },
+            {
+              "fails": 0,
+              "name": "remaining stock is not negative",
+              "path": "::teardown::remaining stock is not negative",
+              "id": "f967cd9da12fdbfd3e86c33582919cd8",
+              "passes": 1
+            }
+          ]
+      }
+    ],
+    "checks": []
+  },
+  "options": {
+    "summaryTrendStats": [
+      "avg",
+      "min",
+      "med",
+      "p(90)",
+      "p(95)",
+      "p(99)",
+      "max"
+    ],
+    "summaryTimeUnit": "",
+    "noColor": false
+  }
+}
