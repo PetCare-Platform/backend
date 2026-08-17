@@ -1,0 +1,224 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: load-test/k6/kafka.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 20000 max VUs, 10m30s max duration (incl. graceful stop):
+              * couponIssue: 20000 iterations shared among 20000 VUs (maxDuration: 10m0s, gracefulStop: 30s)
+
+
+Init          [  17% ] 03374/20000 VUs initialized
+couponIssue   [   0% ]
+
+Init          [  36% ] 07142/20000 VUs initialized
+couponIssue   [   0% ]
+
+Init          [  49% ] 09850/20000 VUs initialized
+couponIssue   [   0% ]
+
+Init          [  74% ] 14897/20000 VUs initialized
+couponIssue   [   0% ]
+
+Init          [  85% ] 16997/20000 VUs initialized
+couponIssue   [   0% ]
+
+Init          [  98% ] 19520/20000 VUs initialized
+couponIssue   [   0% ]
+
+Run           [ 100% ] setup()
+couponIssue   [   0% ]
+
+Run           [ 100% ] setup()
+couponIssue   [   0% ]
+
+Run           [ 100% ] setup()
+couponIssue   [   0% ]
+
+Run           [ 100% ] setup()
+couponIssue   [   0% ]
+
+running (00m04.9s), 08733/20000 VUs, 0 complete and 0 interrupted iterations
+couponIssue   [   0% ] 20000 VUs  00m00.3s/10m0s  00000/20000 shared iters
+
+running (00m05.9s), 15987/20000 VUs, 0 complete and 0 interrupted iterations
+couponIssue   [   0% ] 20000 VUs  00m01.3s/10m0s  00000/20000 shared iters
+
+running (00m06.9s), 20000/20000 VUs, 0 complete and 0 interrupted iterations
+couponIssue   [   0% ] 20000 VUs  00m02.3s/10m0s  00000/20000 shared iters
+
+running (00m07.9s), 18844/20000 VUs, 1156 complete and 0 interrupted iterations
+couponIssue   [   6% ] 20000 VUs  00m03.3s/10m0s  01156/20000 shared iters
+
+running (00m08.9s), 18454/20000 VUs, 1546 complete and 0 interrupted iterations
+couponIssue   [   8% ] 20000 VUs  00m04.3s/10m0s  01546/20000 shared iters
+
+running (00m09.9s), 17695/20000 VUs, 2305 complete and 0 interrupted iterations
+couponIssue   [  12% ] 20000 VUs  00m05.3s/10m0s  02305/20000 shared iters
+
+running (00m10.9s), 16989/20000 VUs, 3011 complete and 0 interrupted iterations
+couponIssue   [  15% ] 20000 VUs  00m06.3s/10m0s  03011/20000 shared iters
+
+running (00m11.9s), 15695/20000 VUs, 4305 complete and 0 interrupted iterations
+couponIssue   [  22% ] 20000 VUs  00m07.3s/10m0s  04305/20000 shared iters
+
+running (00m12.9s), 13976/20000 VUs, 6024 complete and 0 interrupted iterations
+couponIssue   [  30% ] 20000 VUs  00m08.3s/10m0s  06024/20000 shared iters
+
+running (00m13.9s), 12727/20000 VUs, 7273 complete and 0 interrupted iterations
+couponIssue   [  36% ] 20000 VUs  00m09.3s/10m0s  07273/20000 shared iters
+
+running (00m14.9s), 10491/20000 VUs, 9509 complete and 0 interrupted iterations
+couponIssue   [  48% ] 20000 VUs  00m10.3s/10m0s  09509/20000 shared iters
+
+running (00m15.9s), 08212/20000 VUs, 11788 complete and 0 interrupted iterations
+couponIssue   [  59% ] 20000 VUs  00m11.3s/10m0s  11788/20000 shared iters
+
+running (00m16.9s), 05890/20000 VUs, 14110 complete and 0 interrupted iterations
+couponIssue   [  71% ] 20000 VUs  00m12.3s/10m0s  14110/20000 shared iters
+
+running (00m17.9s), 03244/20000 VUs, 16756 complete and 0 interrupted iterations
+couponIssue   [  84% ] 20000 VUs  00m13.3s/10m0s  16756/20000 shared iters
+
+running (00m18.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m19.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m20.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m21.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m22.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m23.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m24.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m25.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m26.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m27.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m28.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m29.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m30.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m31.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m32.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m33.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m34.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m35.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m36.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m37.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m38.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m39.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m40.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m41.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m42.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m43.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m44.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m45.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m46.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m47.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m48.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m49.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m50.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m51.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m52.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m53.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m54.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m55.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m56.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m57.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m58.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (00m59.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+
+running (01m00.9s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+time="2026-08-17T13:22:36Z" level=info msg="[KAFKA] final status: {\"couponId\":38,\"totalQuantity\":10000,\"dbRemainingQuantity\":10000,\"redisRemainingQuantity\":0,\"issueCount\":10000,\"consistent\":true}" source=console
+
+KAFKA load test completed.
+Result file: load-test/results/kafka-aws-c-tuned-1.json
+
+running (01m01.4s), 00000/20000 VUs, 20000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20000 VUs  00m14.0s/10m0s  20000/20000 shared iters
+time="2026-08-17T13:22:37Z" level=error msg="thresholds on metrics 'http_req_duration{name:coupon_issue}' have been crossed"

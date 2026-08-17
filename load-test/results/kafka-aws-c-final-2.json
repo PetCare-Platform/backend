@@ -1,0 +1,361 @@
+{
+  "setup_data": {
+    "couponId": "38",
+    "totalQuantity": 10000
+  },
+  "root_group": {
+    "groups": [
+      {
+        "name": "setup",
+        "path": "::setup",
+        "id": "5c0f8025f7e0b6654089e5b00e950f1a",
+        "groups": [],
+        "checks": [
+            {
+              "path": "::setup::coupon reset succeeds",
+              "id": "1e6732337c930db80f21ca4d5680c059",
+              "passes": 1,
+              "fails": 0,
+              "name": "coupon reset succeeds"
+            },
+            {
+              "passes": 1,
+              "fails": 0,
+              "name": "Redis stock initialization succeeds",
+              "path": "::setup::Redis stock initialization succeeds",
+              "id": "82d0d9d6e982ebb5e20e12c817156c67"
+            }
+          ]
+      },
+      {
+        "groups": [],
+        "checks": [
+            {
+              "name": "coupon status lookup succeeds",
+              "path": "::teardown::coupon status lookup succeeds",
+              "id": "3fa6ab5f98e535a06a2049887f242d83",
+              "passes": 1,
+              "fails": 0
+            },
+            {
+              "path": "::teardown::stock and issue history are consistent",
+              "id": "54cf2fa3b8230cac064420f72d028649",
+              "passes": 1,
+              "fails": 0,
+              "name": "stock and issue history are consistent"
+            },
+            {
+              "name": "expected issue count is persisted",
+              "path": "::teardown::expected issue count is persisted",
+              "id": "7b48eca1a2b7515b3c37a619a062b88e",
+              "passes": 1,
+              "fails": 0
+            },
+            {
+              "id": "f967cd9da12fdbfd3e86c33582919cd8",
+              "passes": 1,
+              "fails": 0,
+              "name": "remaining stock is not negative",
+              "path": "::teardown::remaining stock is not negative"
+            }
+          ],
+        "name": "teardown",
+        "path": "::teardown",
+        "id": "a8a9942382e8ffe2e56ef29e664b8229"
+      }
+    ],
+    "checks": [],
+    "name": "",
+    "path": "",
+    "id": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "options": {
+    "summaryTrendStats": [
+      "avg",
+      "min",
+      "med",
+      "p(90)",
+      "p(95)",
+      "p(99)",
+      "max"
+    ],
+    "summaryTimeUnit": "",
+    "noColor": false
+  },
+  "state": {
+    "isStdOutTTY": false,
+    "isStdErrTTY": false,
+    "testRunDurationMs": 64402.69389
+  },
+  "metrics": {
+    "http_req_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "med": 751.174098,
+        "p(90)": 1124.6827778000002,
+        "p(95)": 1270.451269699998,
+        "p(99)": 1393.1108806999998,
+        "max": 59813.352616,
+        "avg": 960.152764364544,
+        "min": 0
+      }
+    },
+    "checks": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "passes": 6,
+        "fails": 0,
+        "rate": 1
+      }
+    },
+    "http_req_failed{name:coupon_issue}": {
+      "values": {
+        "rate": 0.4016,
+        "passes": 8032,
+        "fails": 11968
+      },
+      "thresholds": {
+        "rate<0.01": {
+          "ok": false
+        }
+      },
+      "type": "rate",
+      "contains": "default"
+    },
+    "iterations": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 20000,
+        "rate": 310.54601588809413
+      }
+    },
+    "kafka_issue_system_error": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 8032,
+        "rate": 124.7152799806586
+      }
+    },
+    "vus": {
+      "type": "gauge",
+      "contains": "default",
+      "values": {
+        "value": 0,
+        "min": 0,
+        "max": 13575
+      }
+    },
+    "kafka_issue_sold_out": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 1968,
+        "rate": 30.557727963388462
+      }
+    },
+    "http_reqs": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 20003,
+        "rate": 310.5925977904773
+      }
+    },
+    "http_req_connecting": {
+      "values": {
+        "avg": 89.16668664500344,
+        "min": 0,
+        "med": 0,
+        "p(90)": 269.75945839999997,
+        "p(95)": 313.8027017999995,
+        "p(99)": 384.9009377,
+        "max": 1045.10889
+      },
+      "type": "trend",
+      "contains": "time"
+    },
+    "http_req_duration{expected_response:true}": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(90)": 1192.271041,
+        "p(95)": 1309.6696145,
+        "p(99)": 1390.0516701,
+        "max": 2467.195685,
+        "avg": 915.199097778212,
+        "min": 13.242532,
+        "med": 908.242455
+      }
+    },
+    "http_req_duration{name:coupon_issue}": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "max": 59813.352616,
+        "avg": 960.1702531073487,
+        "min": 0,
+        "med": 751.1879859999999,
+        "p(90)": 1124.6690676,
+        "p(95)": 1269.6695901499993,
+        "p(99)": 1393.0926786500002
+      },
+      "thresholds": {
+        "p(95)<3000": {
+          "ok": true
+        }
+      }
+    },
+    "data_received": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "rate": 36564.72823981743,
+        "count": 2354867
+      }
+    },
+    "http_req_waiting": {
+      "contains": "time",
+      "values": {
+        "max": 59809.919579,
+        "avg": 940.182673811377,
+        "min": 0,
+        "med": 735.963574,
+        "p(90)": 1093.451249,
+        "p(95)": 1226.3472167999994,
+        "p(99)": 1391.06916726
+      },
+      "type": "trend"
+    },
+    "http_req_blocked": {
+      "values": {
+        "med": 0.00277,
+        "p(90)": 270.73842099999996,
+        "p(95)": 318.63307469999995,
+        "p(99)": 385.75084178000003,
+        "max": 1045.166133,
+        "avg": 89.6503448064794,
+        "min": 0
+      },
+      "type": "trend",
+      "contains": "time"
+    },
+    "kafka_consistency_check_rate": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 1,
+        "fails": 0
+      },
+      "thresholds": {
+        "rate==1": {
+          "ok": true
+        }
+      }
+    },
+    "kafka_system_error_rate": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 0.4016,
+        "passes": 8032,
+        "fails": 11968
+      },
+      "thresholds": {
+        "rate==0": {
+          "ok": false
+        }
+      }
+    },
+    "http_req_sending": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "max": 472.020645,
+        "avg": 19.885322780032944,
+        "min": 0,
+        "med": 0.01116,
+        "p(90)": 13.827693599999996,
+        "p(95)": 194.9348338,
+        "p(99)": 320.96217094
+      }
+    },
+    "data_sent": {
+      "values": {
+        "rate": 41815.36263994935,
+        "count": 2693022
+      },
+      "type": "counter",
+      "contains": "data"
+    },
+    "vus_max": {
+      "values": {
+        "value": 20000,
+        "min": 3628,
+        "max": 20000
+      },
+      "type": "gauge",
+      "contains": "default"
+    },
+    "http_req_tls_handshaking": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "min": 0,
+        "med": 0,
+        "p(90)": 0,
+        "p(95)": 0,
+        "p(99)": 0,
+        "max": 0,
+        "avg": 0
+      }
+    },
+    "http_req_receiving": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 0.08476777313402971,
+        "min": 0,
+        "med": 0.020068,
+        "p(90)": 0.0409714,
+        "p(95)": 0.05897109999999998,
+        "p(99)": 0.3021744599999995,
+        "max": 165.399817
+      }
+    },
+    "kafka_issue_success": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 10000,
+        "rate": 155.27300794404707
+      }
+    },
+    "iteration_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 12896.1672423344,
+        "min": 206.853702,
+        "med": 1286.2904445,
+        "p(90)": 30000.5672481,
+        "p(95)": 30000.94578465,
+        "p(99)": 30018.05088405,
+        "max": 60001.459612
+      }
+    },
+    "http_req_failed": {
+      "contains": "default",
+      "values": {
+        "passes": 8032,
+        "fails": 11971,
+        "rate": 0.4015397690346448
+      },
+      "type": "rate"
+    }
+  }
+}
