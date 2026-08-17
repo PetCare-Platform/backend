@@ -1,0 +1,22 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: load-test/k6/optimistic.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 20 max VUs, 2m30s max duration (incl. graceful stop):
+              * couponIssue: 20 iterations shared among 20 VUs (maxDuration: 2m0s, gracefulStop: 30s)
+
+time="2026-08-17T06:15:26Z" level=info msg="[OPTIMISTIC] final status: {\"couponId\":9,\"totalQuantity\":10,\"dbRemainingQuantity\":0,\"redisRemainingQuantity\":null,\"issueCount\":10,\"consistent\":true}" source=console
+
+OPTIMISTIC load test completed.
+Result file: load-test/results/optimistic-aws-smoke-1.json
+
+running (0m00.3s), 00/20 VUs, 20 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20 VUs  0m00.3s/2m0s  20/20 shared iters

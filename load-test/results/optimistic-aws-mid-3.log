@@ -1,0 +1,38 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: load-test/k6/optimistic.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 1000 max VUs, 2m30s max duration (incl. graceful stop):
+              * couponIssue: 1000 iterations shared among 1000 VUs (maxDuration: 2m0s, gracefulStop: 30s)
+
+
+running (0m00.7s), 0938/1000 VUs, 62 complete and 0 interrupted iterations
+couponIssue   [   6% ] 1000 VUs  0m00.6s/2m0s  0062/1000 shared iters
+
+running (0m01.7s), 0820/1000 VUs, 180 complete and 0 interrupted iterations
+couponIssue   [  18% ] 1000 VUs  0m01.6s/2m0s  0180/1000 shared iters
+
+running (0m02.7s), 0699/1000 VUs, 301 complete and 0 interrupted iterations
+couponIssue   [  30% ] 1000 VUs  0m02.6s/2m0s  0301/1000 shared iters
+
+running (0m03.7s), 0576/1000 VUs, 424 complete and 0 interrupted iterations
+couponIssue   [  42% ] 1000 VUs  0m03.6s/2m0s  0424/1000 shared iters
+
+running (0m04.7s), 0042/1000 VUs, 958 complete and 0 interrupted iterations
+couponIssue   [  96% ] 1000 VUs  0m04.6s/2m0s  0958/1000 shared iters
+time="2026-08-17T06:24:42Z" level=info msg="[OPTIMISTIC] final status: {\"couponId\":14,\"totalQuantity\":500,\"dbRemainingQuantity\":0,\"redisRemainingQuantity\":null,\"issueCount\":500,\"consistent\":true}" source=console
+
+OPTIMISTIC load test completed.
+Result file: load-test/results/optimistic-aws-mid-3.json
+
+running (0m04.8s), 0000/1000 VUs, 1000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 1000 VUs  0m04.6s/2m0s  1000/1000 shared iters
+time="2026-08-17T06:24:43Z" level=error msg="thresholds on metrics 'http_req_duration{name:coupon_issue}' have been crossed"

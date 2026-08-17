@@ -1,0 +1,44 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: load-test/k6/direct.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 1000 max VUs, 2m30s max duration (incl. graceful stop):
+              * couponIssue: 1000 iterations shared among 1000 VUs (maxDuration: 2m0s, gracefulStop: 30s)
+
+
+running (0m00.7s), 0949/1000 VUs, 51 complete and 0 interrupted iterations
+couponIssue   [   5% ] 1000 VUs  0m00.4s/2m0s  0051/1000 shared iters
+
+running (0m01.7s), 0802/1000 VUs, 198 complete and 0 interrupted iterations
+couponIssue   [  20% ] 1000 VUs  0m01.4s/2m0s  0198/1000 shared iters
+
+running (0m02.7s), 0658/1000 VUs, 342 complete and 0 interrupted iterations
+couponIssue   [  34% ] 1000 VUs  0m02.4s/2m0s  0342/1000 shared iters
+
+running (0m03.7s), 0511/1000 VUs, 489 complete and 0 interrupted iterations
+couponIssue   [  49% ] 1000 VUs  0m03.4s/2m0s  0489/1000 shared iters
+
+running (0m04.7s), 0362/1000 VUs, 638 complete and 0 interrupted iterations
+couponIssue   [  64% ] 1000 VUs  0m04.4s/2m0s  0638/1000 shared iters
+
+running (0m05.7s), 0220/1000 VUs, 780 complete and 0 interrupted iterations
+couponIssue   [  78% ] 1000 VUs  0m05.4s/2m0s  0780/1000 shared iters
+
+running (0m06.7s), 0074/1000 VUs, 926 complete and 0 interrupted iterations
+couponIssue   [  93% ] 1000 VUs  0m06.4s/2m0s  0926/1000 shared iters
+time="2026-08-17T06:24:32Z" level=info msg="[DIRECT] final status: {\"couponId\":12,\"totalQuantity\":500,\"dbRemainingQuantity\":400,\"redisRemainingQuantity\":null,\"issueCount\":1000,\"consistent\":false}" source=console
+
+DIRECT load test completed.
+Result file: load-test/results/direct-aws-mid-3.json
+
+running (0m07.2s), 0000/1000 VUs, 1000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 1000 VUs  0m06.9s/2m0s  1000/1000 shared iters
+time="2026-08-17T06:24:32Z" level=error msg="thresholds on metrics 'direct_consistency_check_rate, http_req_duration{name:coupon_issue}' have been crossed"
