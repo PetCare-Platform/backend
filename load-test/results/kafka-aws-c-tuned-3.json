@@ -1,0 +1,353 @@
+{
+  "state": {
+    "isStdOutTTY": false,
+    "isStdErrTTY": false,
+    "testRunDurationMs": 44029.552038
+  },
+  "metrics": {
+    "http_req_sending": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 414.1183266,
+        "p(99)": 1263.8699011599992,
+        "max": 1388.654482,
+        "avg": 68.91173136838192,
+        "min": 0.007986,
+        "med": 5.574619,
+        "p(90)": 39.33664660000001
+      }
+    },
+    "data_received": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "count": 4088984,
+        "rate": 92869.0802139203
+      }
+    },
+    "data_sent": {
+      "contains": "data",
+      "values": {
+        "count": 4461766,
+        "rate": 101335.71189071474
+      },
+      "type": "counter"
+    },
+    "iteration_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 3464.6732088999997,
+        "p(99)": 3641.110801169999,
+        "max": 4560.043927,
+        "avg": 2213.6051933762496,
+        "min": 213.971609,
+        "med": 2238.1977614999996,
+        "p(90)": 3079.0721065000002
+      }
+    },
+    "http_req_failed{name:coupon_issue}": {
+      "contains": "default",
+      "values": {
+        "rate": 0,
+        "passes": 0,
+        "fails": 20000
+      },
+      "thresholds": {
+        "rate<0.01": {
+          "ok": true
+        }
+      },
+      "type": "rate"
+    },
+    "kafka_system_error_rate": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 0,
+        "passes": 0,
+        "fails": 20000
+      },
+      "thresholds": {
+        "rate==0": {
+          "ok": true
+        }
+      }
+    },
+    "http_req_duration{name:coupon_issue}": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "med": 1591.5007445,
+        "p(90)": 2440.1140671000016,
+        "p(95)": 2517.02710545,
+        "p(99)": 2637.40952758,
+        "max": 3438.107288,
+        "avg": 1622.3411968105554,
+        "min": 156.503064
+      },
+      "thresholds": {
+        "p(95)<3000": {
+          "ok": true
+        }
+      }
+    },
+    "http_req_tls_handshaking": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(99)": 0,
+        "max": 0,
+        "avg": 0,
+        "min": 0,
+        "med": 0,
+        "p(90)": 0,
+        "p(95)": 0
+      }
+    },
+    "http_req_receiving": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 0.6696823123908364,
+        "min": 0.012913,
+        "med": 0.037452,
+        "p(90)": 0.2314512000000001,
+        "p(95)": 0.29990589999999995,
+        "p(99)": 1.4643737199999944,
+        "max": 1379.085812
+      }
+    },
+    "checks": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "fails": 0,
+        "rate": 1,
+        "passes": 6
+      }
+    },
+    "http_req_blocked": {
+      "contains": "time",
+      "values": {
+        "avg": 533.931004809819,
+        "min": 0.002078,
+        "med": 306.581382,
+        "p(90)": 1355.8940462,
+        "p(95)": 1404.7520164,
+        "p(99)": 1550.7860299,
+        "max": 2653.239341
+      },
+      "type": "trend"
+    },
+    "vus": {
+      "contains": "default",
+      "values": {
+        "value": 0,
+        "min": 0,
+        "max": 16208
+      },
+      "type": "gauge"
+    },
+    "vus_max": {
+      "type": "gauge",
+      "contains": "default",
+      "values": {
+        "min": 4128,
+        "max": 20000,
+        "value": 20000
+      }
+    },
+    "http_req_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "med": 1587.228802,
+        "p(90)": 2439.9763726,
+        "p(95)": 2516.9695776,
+        "p(99)": 2637.4084040000002,
+        "max": 3438.107288,
+        "avg": 1619.326177717906,
+        "min": 4.288025
+      }
+    },
+    "http_req_failed": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 0,
+        "passes": 0,
+        "fails": 20039
+      }
+    },
+    "kafka_consistency_check_rate": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "passes": 1,
+        "fails": 0,
+        "rate": 1
+      },
+      "thresholds": {
+        "rate==1": {
+          "ok": true
+        }
+      }
+    },
+    "http_reqs": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 20039,
+        "rate": 455.12613852408055
+      }
+    },
+    "http_req_waiting": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "med": 1466.168235,
+        "p(90)": 2347.8862892,
+        "p(95)": 2478.7305060999997,
+        "p(99)": 2526.5151235199996,
+        "max": 2804.459108,
+        "avg": 1549.744764037127,
+        "min": 4.216437
+      }
+    },
+    "kafka_issue_success": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 10000,
+        "rate": 227.1201849014824
+      }
+    },
+    "iterations": {
+      "contains": "default",
+      "values": {
+        "count": 20000,
+        "rate": 454.2403698029648
+      },
+      "type": "counter"
+    },
+    "http_req_duration{expected_response:true}": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 1619.326177717906,
+        "min": 4.288025,
+        "med": 1587.228802,
+        "p(90)": 2439.9763726,
+        "p(95)": 2516.9695776,
+        "p(99)": 2637.4084040000002,
+        "max": 3438.107288
+      }
+    },
+    "kafka_issue_sold_out": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 10000,
+        "rate": 227.1201849014824
+      }
+    },
+    "http_req_connecting": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 524.2914860765999,
+        "min": 0,
+        "med": 302.449455,
+        "p(90)": 1349.081654,
+        "p(95)": 1396.2499798999997,
+        "p(99)": 1510.3178931399993,
+        "max": 2499.955826
+      }
+    }
+  },
+  "setup_data": {
+    "totalQuantity": 10000,
+    "couponId": "38"
+  },
+  "root_group": {
+    "groups": [
+      {
+        "name": "setup",
+        "path": "::setup",
+        "id": "5c0f8025f7e0b6654089e5b00e950f1a",
+        "groups": [],
+        "checks": [
+            {
+              "fails": 0,
+              "name": "coupon reset succeeds",
+              "path": "::setup::coupon reset succeeds",
+              "id": "1e6732337c930db80f21ca4d5680c059",
+              "passes": 1
+            },
+            {
+              "name": "Redis stock initialization succeeds",
+              "path": "::setup::Redis stock initialization succeeds",
+              "id": "82d0d9d6e982ebb5e20e12c817156c67",
+              "passes": 1,
+              "fails": 0
+            }
+          ]
+      },
+      {
+        "id": "a8a9942382e8ffe2e56ef29e664b8229",
+        "groups": [],
+        "checks": [
+            {
+              "fails": 0,
+              "name": "coupon status lookup succeeds",
+              "path": "::teardown::coupon status lookup succeeds",
+              "id": "3fa6ab5f98e535a06a2049887f242d83",
+              "passes": 1
+            },
+            {
+              "name": "stock and issue history are consistent",
+              "path": "::teardown::stock and issue history are consistent",
+              "id": "54cf2fa3b8230cac064420f72d028649",
+              "passes": 1,
+              "fails": 0
+            },
+            {
+              "fails": 0,
+              "name": "expected issue count is persisted",
+              "path": "::teardown::expected issue count is persisted",
+              "id": "7b48eca1a2b7515b3c37a619a062b88e",
+              "passes": 1
+            },
+            {
+              "path": "::teardown::remaining stock is not negative",
+              "id": "f967cd9da12fdbfd3e86c33582919cd8",
+              "passes": 1,
+              "fails": 0,
+              "name": "remaining stock is not negative"
+            }
+          ],
+        "name": "teardown",
+        "path": "::teardown"
+      }
+    ],
+    "checks": [],
+    "name": "",
+    "path": "",
+    "id": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "options": {
+    "noColor": false,
+    "summaryTrendStats": [
+      "avg",
+      "min",
+      "med",
+      "p(90)",
+      "p(95)",
+      "p(99)",
+      "max"
+    ],
+    "summaryTimeUnit": ""
+  }
+}
