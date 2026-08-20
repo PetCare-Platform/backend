@@ -318,7 +318,9 @@ Redis 잔여 재고 >= 0
 | Network Error | 연결 실패 등 HTTP 요청 자체의 실패 |
 | WAITING | Redis 선점 후 Kafka 비동기 처리를 기다리는 정상 접수 응답 |
 | Consumer 완료 건수 | Kafka Consumer가 DB 발급 이력 저장을 완료한 수 |
-| End-to-end 완료시간 | 첫 요청부터 모든 비동기 DB 저장 완료까지 걸린 시간 |
+| 접수 완료 시점 | 첫 요청부터 모든 요청이 응답을 받기까지 걸린 시간 |
+| Consumer 반영 구간 | 접수가 끝난 뒤 모든 비동기 DB 저장이 완료되기까지 걸린 시간 |
+| End-to-end 완료시간 | 위 둘의 합. k6 전체 실행 시간에는 VU 초기화와 `setup()`이 섞이므로 그대로 쓰지 않는다 |
 | Retry/DLQ | Kafka 처리 재시도 및 최종 실패 메시지 수 |
 
 HTTP 상태코드만으로 결과를 판정하지 않습니다.
