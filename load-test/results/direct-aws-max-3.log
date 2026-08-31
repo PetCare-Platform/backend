@@ -1,0 +1,68 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: load-test/k6/direct.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 2000 max VUs, 2m30s max duration (incl. graceful stop):
+              * couponIssue: 2000 iterations shared among 2000 VUs (maxDuration: 2m0s, gracefulStop: 30s)
+
+
+Run           [ 100% ] setup()
+couponIssue   [   0% ]
+
+running (0m01.2s), 1923/2000 VUs, 77 complete and 0 interrupted iterations
+couponIssue   [   4% ] 2000 VUs  0m00.7s/2m0s  0077/2000 shared iters
+
+running (0m02.2s), 1777/2000 VUs, 223 complete and 0 interrupted iterations
+couponIssue   [  11% ] 2000 VUs  0m01.7s/2m0s  0223/2000 shared iters
+
+running (0m03.2s), 1630/2000 VUs, 370 complete and 0 interrupted iterations
+couponIssue   [  18% ] 2000 VUs  0m02.7s/2m0s  0370/2000 shared iters
+
+running (0m04.2s), 1488/2000 VUs, 512 complete and 0 interrupted iterations
+couponIssue   [  26% ] 2000 VUs  0m03.7s/2m0s  0512/2000 shared iters
+
+running (0m05.2s), 1341/2000 VUs, 659 complete and 0 interrupted iterations
+couponIssue   [  33% ] 2000 VUs  0m04.7s/2m0s  0659/2000 shared iters
+
+running (0m06.2s), 1197/2000 VUs, 803 complete and 0 interrupted iterations
+couponIssue   [  40% ] 2000 VUs  0m05.7s/2m0s  0803/2000 shared iters
+
+running (0m07.2s), 1055/2000 VUs, 945 complete and 0 interrupted iterations
+couponIssue   [  47% ] 2000 VUs  0m06.7s/2m0s  0945/2000 shared iters
+
+running (0m08.2s), 0912/2000 VUs, 1088 complete and 0 interrupted iterations
+couponIssue   [  54% ] 2000 VUs  0m07.7s/2m0s  1088/2000 shared iters
+
+running (0m09.2s), 0768/2000 VUs, 1232 complete and 0 interrupted iterations
+couponIssue   [  62% ] 2000 VUs  0m08.7s/2m0s  1232/2000 shared iters
+
+running (0m10.2s), 0625/2000 VUs, 1375 complete and 0 interrupted iterations
+couponIssue   [  69% ] 2000 VUs  0m09.7s/2m0s  1375/2000 shared iters
+
+running (0m11.2s), 0480/2000 VUs, 1520 complete and 0 interrupted iterations
+couponIssue   [  76% ] 2000 VUs  0m10.7s/2m0s  1520/2000 shared iters
+
+running (0m12.2s), 0333/2000 VUs, 1667 complete and 0 interrupted iterations
+couponIssue   [  83% ] 2000 VUs  0m11.7s/2m0s  1667/2000 shared iters
+
+running (0m13.2s), 0190/2000 VUs, 1810 complete and 0 interrupted iterations
+couponIssue   [  90% ] 2000 VUs  0m12.7s/2m0s  1810/2000 shared iters
+
+running (0m14.2s), 0043/2000 VUs, 1957 complete and 0 interrupted iterations
+couponIssue   [  98% ] 2000 VUs  0m13.7s/2m0s  1957/2000 shared iters
+time="2026-08-17T06:31:45Z" level=info msg="[DIRECT] final status: {\"couponId\":17,\"totalQuantity\":1000,\"dbRemainingQuantity\":799,\"redisRemainingQuantity\":null,\"issueCount\":2000,\"consistent\":false}" source=console
+
+DIRECT load test completed.
+Result file: load-test/results/direct-aws-max-3.json
+
+running (0m14.5s), 0000/2000 VUs, 2000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 2000 VUs  0m14.0s/2m0s  2000/2000 shared iters
+time="2026-08-17T06:31:45Z" level=error msg="thresholds on metrics 'direct_consistency_check_rate, http_req_duration{name:coupon_issue}' have been crossed"

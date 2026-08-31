@@ -1,0 +1,50 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: load-test/k6/conditional.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 2000 max VUs, 2m30s max duration (incl. graceful stop):
+              * couponIssue: 2000 iterations shared among 2000 VUs (maxDuration: 2m0s, gracefulStop: 30s)
+
+
+Run           [ 100% ] setup()
+couponIssue   [   0% ]
+
+running (0m01.2s), 1880/2000 VUs, 120 complete and 0 interrupted iterations
+couponIssue   [   6% ] 2000 VUs  0m01.0s/2m0s  0120/2000 shared iters
+
+running (0m02.2s), 1739/2000 VUs, 261 complete and 0 interrupted iterations
+couponIssue   [  13% ] 2000 VUs  0m02.0s/2m0s  0261/2000 shared iters
+
+running (0m03.2s), 1599/2000 VUs, 401 complete and 0 interrupted iterations
+couponIssue   [  20% ] 2000 VUs  0m03.0s/2m0s  0401/2000 shared iters
+
+running (0m04.2s), 1461/2000 VUs, 539 complete and 0 interrupted iterations
+couponIssue   [  27% ] 2000 VUs  0m04.0s/2m0s  0539/2000 shared iters
+
+running (0m05.2s), 1322/2000 VUs, 678 complete and 0 interrupted iterations
+couponIssue   [  34% ] 2000 VUs  0m05.0s/2m0s  0678/2000 shared iters
+
+running (0m06.2s), 1179/2000 VUs, 821 complete and 0 interrupted iterations
+couponIssue   [  41% ] 2000 VUs  0m06.0s/2m0s  0821/2000 shared iters
+
+running (0m07.2s), 1041/2000 VUs, 959 complete and 0 interrupted iterations
+couponIssue   [  48% ] 2000 VUs  0m07.0s/2m0s  0959/2000 shared iters
+
+running (0m08.2s), 0312/2000 VUs, 1688 complete and 0 interrupted iterations
+couponIssue   [  84% ] 2000 VUs  0m08.0s/2m0s  1688/2000 shared iters
+time="2026-08-17T06:32:15Z" level=info msg="[CONDITIONAL] final status: {\"couponId\":20,\"totalQuantity\":1000,\"dbRemainingQuantity\":0,\"redisRemainingQuantity\":null,\"issueCount\":1000,\"consistent\":true}" source=console
+
+CONDITIONAL load test completed.
+Result file: load-test/results/conditional-aws-max-3.json
+
+running (0m08.6s), 0000/2000 VUs, 2000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 2000 VUs  0m08.3s/2m0s  2000/2000 shared iters
+time="2026-08-17T06:32:15Z" level=error msg="thresholds on metrics 'http_req_duration{name:coupon_issue}' have been crossed"

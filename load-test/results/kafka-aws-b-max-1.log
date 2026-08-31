@@ -1,0 +1,37 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: load-test/k6/kafka.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 2000 max VUs, 5m30s max duration (incl. graceful stop):
+              * couponIssue: 2000 iterations shared among 2000 VUs (maxDuration: 5m0s, gracefulStop: 30s)
+
+
+running (0m00.4s), 1256/2000 VUs, 745 complete and 0 interrupted iterations
+couponIssue   [  37% ] 2000 VUs  0m00.4s/5m0s  0745/2000 shared iters
+
+running (0m01.4s), 0000/2000 VUs, 2000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 2000 VUs  0m00.6s/5m0s  2000/2000 shared iters
+
+running (0m02.4s), 0000/2000 VUs, 2000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 2000 VUs  0m00.6s/5m0s  2000/2000 shared iters
+
+running (0m03.4s), 0000/2000 VUs, 2000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 2000 VUs  0m00.6s/5m0s  2000/2000 shared iters
+
+running (0m04.4s), 0000/2000 VUs, 2000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 2000 VUs  0m00.6s/5m0s  2000/2000 shared iters
+time="2026-08-17T08:07:31Z" level=info msg="[KAFKA] final status: {\"couponId\":25,\"totalQuantity\":1000,\"dbRemainingQuantity\":1000,\"redisRemainingQuantity\":0,\"issueCount\":1000,\"consistent\":true}" source=console
+
+KAFKA load test completed.
+Result file: load-test/results/kafka-aws-b-max-1.json
+
+running (0m04.7s), 0000/2000 VUs, 2000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 2000 VUs  0m00.6s/5m0s  2000/2000 shared iters

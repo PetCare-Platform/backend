@@ -1,0 +1,35 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: load-test/k6/pessimistic.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 1000 max VUs, 2m30s max duration (incl. graceful stop):
+              * couponIssue: 1000 iterations shared among 1000 VUs (maxDuration: 2m0s, gracefulStop: 30s)
+
+
+running (0m00.7s), 0937/1000 VUs, 63 complete and 0 interrupted iterations
+couponIssue   [   6% ] 1000 VUs  0m00.6s/2m0s  0063/1000 shared iters
+
+running (0m01.7s), 0805/1000 VUs, 195 complete and 0 interrupted iterations
+couponIssue   [  20% ] 1000 VUs  0m01.6s/2m0s  0195/1000 shared iters
+
+running (0m02.7s), 0675/1000 VUs, 325 complete and 0 interrupted iterations
+couponIssue   [  32% ] 1000 VUs  0m02.6s/2m0s  0325/1000 shared iters
+
+running (0m03.7s), 0546/1000 VUs, 454 complete and 0 interrupted iterations
+couponIssue   [  45% ] 1000 VUs  0m03.6s/2m0s  0454/1000 shared iters
+time="2026-08-17T06:24:37Z" level=info msg="[PESSIMISTIC] final status: {\"couponId\":13,\"totalQuantity\":500,\"dbRemainingQuantity\":0,\"redisRemainingQuantity\":null,\"issueCount\":500,\"consistent\":true}" source=console
+
+PESSIMISTIC load test completed.
+Result file: load-test/results/pessimistic-aws-mid-3.json
+
+running (0m04.6s), 0000/1000 VUs, 1000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 1000 VUs  0m04.4s/2m0s  1000/1000 shared iters
+time="2026-08-17T06:24:37Z" level=error msg="thresholds on metrics 'http_req_duration{name:coupon_issue}' have been crossed"

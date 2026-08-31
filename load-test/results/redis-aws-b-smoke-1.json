@@ -1,0 +1,335 @@
+{
+  "options": {
+    "summaryTimeUnit": "",
+    "noColor": false,
+    "summaryTrendStats": [
+      "avg",
+      "min",
+      "med",
+      "p(90)",
+      "p(95)",
+      "p(99)",
+      "max"
+    ]
+  },
+  "state": {
+    "isStdOutTTY": false,
+    "isStdErrTTY": false,
+    "testRunDurationMs": 85.848179
+  },
+  "metrics": {
+    "http_reqs": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 23,
+        "rate": 267.91482670820545
+      }
+    },
+    "http_req_duration{expected_response:true}": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "max": 46.003422,
+        "avg": 29.204685,
+        "min": 6.834338,
+        "med": 29.574948,
+        "p(90)": 39.9710002,
+        "p(95)": 40.4842563,
+        "p(99)": 44.79943724
+      }
+    },
+    "http_req_sending": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 0.1973779,
+        "p(99)": 0.20608474000000002,
+        "max": 0.208325,
+        "avg": 0.10836308695652175,
+        "min": 0.01707,
+        "med": 0.104875,
+        "p(90)": 0.18898720000000002
+      }
+    },
+    "http_req_waiting": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 40.2715595,
+        "p(99)": 44.56751168000001,
+        "max": 45.765952,
+        "avg": 28.94796186956522,
+        "min": 6.763963,
+        "med": 28.758468,
+        "p(90)": 39.7801236
+      }
+    },
+    "http_req_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 40.4842563,
+        "p(99)": 44.79943724,
+        "max": 46.003422,
+        "avg": 29.204685,
+        "min": 6.834338,
+        "med": 29.574948,
+        "p(90)": 39.9710002
+      }
+    },
+    "http_req_receiving": {
+      "values": {
+        "p(90)": 0.11443920000000002,
+        "p(95)": 0.5075639999999995,
+        "p(99)": 1.6237419600000016,
+        "max": 1.926414,
+        "avg": 0.14836004347826084,
+        "min": 0.019144,
+        "med": 0.041292
+      },
+      "type": "trend",
+      "contains": "time"
+    },
+    "redis_consistency_check_rate": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 1,
+        "fails": 0
+      },
+      "thresholds": {
+        "rate==1": {
+          "ok": true
+        }
+      }
+    },
+    "redis_issue_sold_out": {
+      "values": {
+        "count": 10,
+        "rate": 116.48470726443715
+      },
+      "type": "counter",
+      "contains": "default"
+    },
+    "redis_issue_success": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 10,
+        "rate": 116.48470726443715
+      }
+    },
+    "http_req_duration{name:coupon_issue}": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "min": 21.588855,
+        "med": 31.582354000000002,
+        "p(90)": 40.112194699999996,
+        "p(95)": 40.8043969,
+        "p(99)": 44.96361697999999,
+        "max": 46.003422,
+        "avg": 31.842451650000005
+      },
+      "thresholds": {
+        "p(95)<3000": {
+          "ok": true
+        }
+      }
+    },
+    "iterations": {
+      "contains": "default",
+      "values": {
+        "rate": 232.9694145288743,
+        "count": 20
+      },
+      "type": "counter"
+    },
+    "data_received": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "count": 4562,
+        "rate": 53140.323454036225
+      }
+    },
+    "data_sent": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "count": 4687,
+        "rate": 54596.38229484169
+      }
+    },
+    "iteration_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 41.24466855,
+        "p(99)": 45.57074890999999,
+        "max": 46.652269,
+        "avg": 32.85531515,
+        "min": 22.833822,
+        "med": 32.319014499999994,
+        "p(90)": 40.6811669
+      }
+    },
+    "http_req_failed": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "fails": 23,
+        "rate": 0,
+        "passes": 0
+      }
+    },
+    "http_req_failed{name:coupon_issue}": {
+      "values": {
+        "rate": 0,
+        "passes": 0,
+        "fails": 20
+      },
+      "thresholds": {
+        "rate<0.01": {
+          "ok": true
+        }
+      },
+      "type": "rate",
+      "contains": "default"
+    },
+    "redis_system_error_rate": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 0,
+        "passes": 0,
+        "fails": 20
+      },
+      "thresholds": {
+        "rate==0": {
+          "ok": true
+        }
+      }
+    },
+    "http_req_blocked": {
+      "contains": "time",
+      "values": {
+        "med": 0.726271,
+        "p(90)": 1.5458876,
+        "p(95)": 1.5809829999999998,
+        "p(99)": 1.6233977,
+        "max": 1.634555,
+        "avg": 0.7476294782608698,
+        "min": 0.00414
+      },
+      "type": "trend"
+    },
+    "http_req_tls_handshaking": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(99)": 0,
+        "max": 0,
+        "avg": 0,
+        "min": 0,
+        "med": 0,
+        "p(90)": 0,
+        "p(95)": 0
+      }
+    },
+    "http_req_connecting": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 0.7013416521739132,
+        "min": 0,
+        "med": 0.669433,
+        "p(90)": 1.5026138,
+        "p(95)": 1.5360577999999998,
+        "p(99)": 1.5625088200000001,
+        "max": 1.569355
+      }
+    },
+    "checks": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 6,
+        "fails": 0
+      }
+    }
+  },
+  "setup_data": {
+    "couponId": "11",
+    "totalQuantity": 10
+  },
+  "root_group": {
+    "name": "",
+    "path": "",
+    "id": "d41d8cd98f00b204e9800998ecf8427e",
+    "groups": [
+      {
+        "name": "setup",
+        "path": "::setup",
+        "id": "5c0f8025f7e0b6654089e5b00e950f1a",
+        "groups": [],
+        "checks": [
+            {
+              "name": "coupon reset succeeds",
+              "path": "::setup::coupon reset succeeds",
+              "id": "1e6732337c930db80f21ca4d5680c059",
+              "passes": 1,
+              "fails": 0
+            },
+            {
+              "name": "Redis stock initialization succeeds",
+              "path": "::setup::Redis stock initialization succeeds",
+              "id": "82d0d9d6e982ebb5e20e12c817156c67",
+              "passes": 1,
+              "fails": 0
+            }
+          ]
+      },
+      {
+        "name": "teardown",
+        "path": "::teardown",
+        "id": "a8a9942382e8ffe2e56ef29e664b8229",
+        "groups": [],
+        "checks": [
+            {
+              "name": "coupon status lookup succeeds",
+              "path": "::teardown::coupon status lookup succeeds",
+              "id": "3fa6ab5f98e535a06a2049887f242d83",
+              "passes": 1,
+              "fails": 0
+            },
+            {
+              "id": "54cf2fa3b8230cac064420f72d028649",
+              "passes": 1,
+              "fails": 0,
+              "name": "stock and issue history are consistent",
+              "path": "::teardown::stock and issue history are consistent"
+            },
+            {
+              "id": "7b48eca1a2b7515b3c37a619a062b88e",
+              "passes": 1,
+              "fails": 0,
+              "name": "expected issue count is persisted",
+              "path": "::teardown::expected issue count is persisted"
+            },
+            {
+              "name": "remaining stock is not negative",
+              "path": "::teardown::remaining stock is not negative",
+              "id": "f967cd9da12fdbfd3e86c33582919cd8",
+              "passes": 1,
+              "fails": 0
+            }
+          ]
+      }
+    ],
+    "checks": []
+  }
+}

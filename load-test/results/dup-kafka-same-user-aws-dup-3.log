@@ -1,0 +1,25 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: load-test/k6/duplicate.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 10 max VUs, 2m30s max duration (incl. graceful stop):
+              * duplicateIssue: 10 iterations shared among 10 VUs (maxDuration: 2m0s, gracefulStop: 30s)
+
+
+running (0m01.0s), 00/10 VUs, 10 complete and 0 interrupted iterations
+duplicateIssue ✓ [ 100% ] 10 VUs  0m00.0s/2m0s  10/10 shared iters
+time="2026-08-17T09:29:52Z" level=info msg="[KAFKA/same-user] final status: {\"couponId\":36,\"totalQuantity\":100,\"dbRemainingQuantity\":100,\"redisRemainingQuantity\":99,\"issueCount\":1,\"consistent\":true}" source=console
+
+KAFKA / same-user duplicate test completed.
+Result file: load-test/results/dup-kafka-same-user-aws-dup-3.json
+
+running (0m01.0s), 00/10 VUs, 10 complete and 0 interrupted iterations
+duplicateIssue ✓ [ 100% ] 10 VUs  0m00.0s/2m0s  10/10 shared iters

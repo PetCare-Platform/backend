@@ -1,0 +1,50 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: load-test/k6/optimistic.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 2000 max VUs, 2m30s max duration (incl. graceful stop):
+              * couponIssue: 2000 iterations shared among 2000 VUs (maxDuration: 2m0s, gracefulStop: 30s)
+
+
+Run           [ 100% ] setup()
+couponIssue   [   0% ]
+
+running (0m01.3s), 1899/2000 VUs, 101 complete and 0 interrupted iterations
+couponIssue   [   5% ] 2000 VUs  0m01.0s/2m0s  0101/2000 shared iters
+
+running (0m02.3s), 1776/2000 VUs, 224 complete and 0 interrupted iterations
+couponIssue   [  11% ] 2000 VUs  0m02.0s/2m0s  0224/2000 shared iters
+
+running (0m03.3s), 1650/2000 VUs, 350 complete and 0 interrupted iterations
+couponIssue   [  18% ] 2000 VUs  0m03.0s/2m0s  0350/2000 shared iters
+
+running (0m04.2s), 1526/2000 VUs, 474 complete and 0 interrupted iterations
+couponIssue   [  24% ] 2000 VUs  0m04.0s/2m0s  0474/2000 shared iters
+
+running (0m05.3s), 1400/2000 VUs, 600 complete and 0 interrupted iterations
+couponIssue   [  30% ] 2000 VUs  0m05.0s/2m0s  0600/2000 shared iters
+
+running (0m06.2s), 1274/2000 VUs, 726 complete and 0 interrupted iterations
+couponIssue   [  36% ] 2000 VUs  0m06.0s/2m0s  0726/2000 shared iters
+
+running (0m07.3s), 1155/2000 VUs, 845 complete and 0 interrupted iterations
+couponIssue   [  42% ] 2000 VUs  0m07.0s/2m0s  0845/2000 shared iters
+
+running (0m08.3s), 1030/2000 VUs, 970 complete and 0 interrupted iterations
+couponIssue   [  48% ] 2000 VUs  0m08.0s/2m0s  0970/2000 shared iters
+time="2026-08-17T06:31:17Z" level=info msg="[OPTIMISTIC] final status: {\"couponId\":19,\"totalQuantity\":1000,\"dbRemainingQuantity\":0,\"redisRemainingQuantity\":null,\"issueCount\":1000,\"consistent\":true}" source=console
+
+OPTIMISTIC load test completed.
+Result file: load-test/results/optimistic-aws-max-2.json
+
+running (0m09.2s), 0000/2000 VUs, 2000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 2000 VUs  0m09.0s/2m0s  2000/2000 shared iters
+time="2026-08-17T06:31:17Z" level=error msg="thresholds on metrics 'http_req_duration{name:coupon_issue}' have been crossed"

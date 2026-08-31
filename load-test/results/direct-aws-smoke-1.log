@@ -1,0 +1,23 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: load-test/k6/direct.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 20 max VUs, 2m30s max duration (incl. graceful stop):
+              * couponIssue: 20 iterations shared among 20 VUs (maxDuration: 2m0s, gracefulStop: 30s)
+
+time="2026-08-17T06:15:18Z" level=info msg="[DIRECT] final status: {\"couponId\":7,\"totalQuantity\":10,\"dbRemainingQuantity\":8,\"redisRemainingQuantity\":null,\"issueCount\":20,\"consistent\":false}" source=console
+
+DIRECT load test completed.
+Result file: load-test/results/direct-aws-smoke-1.json
+
+running (0m00.2s), 00/20 VUs, 20 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20 VUs  0m00.2s/2m0s  20/20 shared iters
+time="2026-08-17T06:15:18Z" level=error msg="thresholds on metrics 'direct_consistency_check_rate' have been crossed"

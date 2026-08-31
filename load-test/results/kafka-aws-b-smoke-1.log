@@ -1,0 +1,25 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: load-test/k6/kafka.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 20 max VUs, 2m30s max duration (incl. graceful stop):
+              * couponIssue: 20 iterations shared among 20 VUs (maxDuration: 2m0s, gracefulStop: 30s)
+
+
+running (0m01.0s), 00/20 VUs, 20 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20 VUs  0m00.0s/2m0s  20/20 shared iters
+time="2026-08-17T08:05:33Z" level=info msg="[KAFKA] final status: {\"couponId\":22,\"totalQuantity\":10,\"dbRemainingQuantity\":10,\"redisRemainingQuantity\":0,\"issueCount\":10,\"consistent\":true}" source=console
+
+KAFKA load test completed.
+Result file: load-test/results/kafka-aws-b-smoke-1.json
+
+running (0m01.1s), 00/20 VUs, 20 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 20 VUs  0m00.0s/2m0s  20/20 shared iters

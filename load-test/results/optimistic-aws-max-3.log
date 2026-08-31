@@ -1,0 +1,50 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: load-test/k6/optimistic.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 2000 max VUs, 2m30s max duration (incl. graceful stop):
+              * couponIssue: 2000 iterations shared among 2000 VUs (maxDuration: 2m0s, gracefulStop: 30s)
+
+
+running (0m00.3s), 2000/2000 VUs, 0 complete and 0 interrupted iterations
+couponIssue   [   0% ] 2000 VUs  0m00.0s/2m0s  0000/2000 shared iters
+
+running (0m01.3s), 1898/2000 VUs, 102 complete and 0 interrupted iterations
+couponIssue   [   5% ] 2000 VUs  0m01.0s/2m0s  0102/2000 shared iters
+
+running (0m02.3s), 1772/2000 VUs, 228 complete and 0 interrupted iterations
+couponIssue   [  11% ] 2000 VUs  0m02.0s/2m0s  0228/2000 shared iters
+
+running (0m03.3s), 1646/2000 VUs, 354 complete and 0 interrupted iterations
+couponIssue   [  18% ] 2000 VUs  0m03.0s/2m0s  0354/2000 shared iters
+
+running (0m04.3s), 1521/2000 VUs, 479 complete and 0 interrupted iterations
+couponIssue   [  24% ] 2000 VUs  0m04.0s/2m0s  0479/2000 shared iters
+
+running (0m05.3s), 1397/2000 VUs, 603 complete and 0 interrupted iterations
+couponIssue   [  30% ] 2000 VUs  0m05.0s/2m0s  0603/2000 shared iters
+
+running (0m06.3s), 1276/2000 VUs, 724 complete and 0 interrupted iterations
+couponIssue   [  36% ] 2000 VUs  0m06.0s/2m0s  0724/2000 shared iters
+
+running (0m07.3s), 1149/2000 VUs, 851 complete and 0 interrupted iterations
+couponIssue   [  43% ] 2000 VUs  0m07.0s/2m0s  0851/2000 shared iters
+
+running (0m08.3s), 1024/2000 VUs, 976 complete and 0 interrupted iterations
+couponIssue   [  49% ] 2000 VUs  0m08.0s/2m0s  0976/2000 shared iters
+time="2026-08-17T06:32:05Z" level=info msg="[OPTIMISTIC] final status: {\"couponId\":19,\"totalQuantity\":1000,\"dbRemainingQuantity\":0,\"redisRemainingQuantity\":null,\"issueCount\":1000,\"consistent\":true}" source=console
+
+OPTIMISTIC load test completed.
+Result file: load-test/results/optimistic-aws-max-3.json
+
+running (0m09.3s), 0000/2000 VUs, 2000 complete and 0 interrupted iterations
+couponIssue ✓ [ 100% ] 2000 VUs  0m09.0s/2m0s  2000/2000 shared iters
+time="2026-08-17T06:32:06Z" level=error msg="thresholds on metrics 'http_req_duration{name:coupon_issue}' have been crossed"
